@@ -2,7 +2,13 @@
 
 public class Response<T>
 {
-    private T? Data { get; set; }
-    private bool IsSucces { get; set; } = false;
-    private string Message { get; set; } = string.Empty;
+    public T? Data { get; set; } = default;
+    public bool IsSucces { get; set; } = false;
+    public string Message { get; set; } = string.Empty;
+}
+
+public class Response
+{
+    public bool IsSucces { get; set; } = false;
+    public string Message { get; set; } = string.Empty;
 }

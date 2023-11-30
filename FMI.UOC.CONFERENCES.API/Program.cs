@@ -26,9 +26,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(IdentityData.Admin, p => p.RequireRole(IdentityData.Admin));
-    options.AddPolicy(IdentityData.Manager, p => p.RequireRole(IdentityData.Manager));
-    options.AddPolicy(IdentityData.Speaker, p => p.RequireRole(IdentityData.Speaker));
-    options.AddPolicy(IdentityData.User, p => p.RequireRole(IdentityData.User));
+    options.AddPolicy(IdentityData.Manager, p => p.RequireRole(IdentityData.Manager, IdentityData.Admin));
+    options.AddPolicy(IdentityData.Speaker, p => p.RequireRole(IdentityData.Speaker, IdentityData.Manager, IdentityData.Admin));
+    options.AddPolicy(IdentityData.User, p => p.RequireRole(IdentityData.User, IdentityData.Speaker, IdentityData.Manager, IdentityData.Admin));
 });
 
 builder.Services.AddControllers();

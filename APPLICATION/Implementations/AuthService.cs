@@ -1,44 +1,74 @@
-﻿using DOMAIN.Requests;
+﻿using APPLICATION.Contracts;
+using DOMAIN.Requests;
+using DOMAIN.Responses;
+using DOMAIN.Utilities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using PERSISTANCE.Contracts;
+using BC = BCrypt.Net.BCrypt;
 
 namespace APPLICATION.Implementations;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IConfiguration _config;
-    public AuthService(IConfiguration config)
+    private readonly IAuthRepository _authRepository;
+    private readonly IJwtService _jwtService;
+    public AuthService(IConfiguration config, IAuthRepository authRepository, IJwtService jwtService)
     {
         _config = config;
+        _authRepository = authRepository;
+        _jwtService = jwtService;
     }
-    private string GenerateToken(TokenGenerationRequest payload)
+    public async Task<Response> Register(RegisterRequest payload)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
+        var response = new Response();
 
-        var key = Encoding.UTF8.GetBytes(_config.GetSection("JwtSettings:Key").Value!);
-        var expiresIn = Convert.ToDouble(_config.GetSection("JwtSettings:ExpireIn").Value);
-
-        var claims = new List<Claim>()
+        if (payload.Password != payload.RePassword)
         {
-            new("asd","asd"),
-            new(ClaimTypes.Role,"asd")
-        };
+            response.Message = "Passwords does not match!";
+            return response;
+        }
 
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var hashedPassword = BC.HashPassword(payload.Password);
+
+        if (await _authRepository.RegisterUser(payload.Email, hashedPassword))
         {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(expiresIn),
-            Issuer = _config.GetSection("JwtSettings:Issuer").Value,
-            Audience = _config.GetSection("JwtSettings:Audience").Value,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-        };
+            response.IsSucces = true;
+            response.Message = "Ok";
+            return response;
+        }
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        response.Message = "An account with this email already exists!";
+        return response;
+    }
+    public async Task<Response<AuthResponse>> Login(LoginRequest payload)
+    {
+        var response = new Response<AuthResponse>();
 
-        var jwt = tokenHandler.WriteToken(token);
-        return jwt;
+        var user = await _authRepository.GetUserData(payload.Email);
+
+        if (user is null)
+        {
+            response.Message = "Invalid Email or Password!";
+            return response;
+        }
+
+        if (BC.Verify(payload.Password, user.Password))
+        {
+            user.Password = string.Empty;
+
+            response.Data = new AuthResponse()
+            {
+                User = user,
+                Jwt = _jwtService.GenerateToken(user)
+            };
+            response.IsSucces = true;
+            response.Message = "Ok";
+
+            return response;
+        }
+
+        response.Message = "Invalid Email or Password!";
+        return response;
     }
 }
