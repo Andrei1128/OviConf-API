@@ -34,7 +34,7 @@ public class AuthService : IAuthService
         if (await _authRepository.RegisterUser(payload.Email, hashedPassword))
         {
             response.IsSucces = true;
-            response.Message = "Ok";
+            response.Message = "Account created!";
             return response;
         }
 
@@ -63,7 +63,7 @@ public class AuthService : IAuthService
                 Jwt = _jwtService.GenerateToken(user)
             };
             response.IsSucces = true;
-            response.Message = "Ok";
+            response.Message = "Login succes!";
 
             return response;
         }
