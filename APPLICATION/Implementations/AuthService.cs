@@ -2,7 +2,6 @@
 using DOMAIN.Requests;
 using DOMAIN.Responses;
 using DOMAIN.Utilities;
-using Microsoft.Extensions.Configuration;
 using PERSISTANCE.Contracts;
 using BC = BCrypt.Net.BCrypt;
 
@@ -10,12 +9,10 @@ namespace APPLICATION.Implementations;
 
 public class AuthService : IAuthService
 {
-    private readonly IConfiguration _config;
     private readonly IAuthRepository _authRepository;
     private readonly IJwtService _jwtService;
-    public AuthService(IConfiguration config, IAuthRepository authRepository, IJwtService jwtService)
+    public AuthService(IAuthRepository authRepository, IJwtService jwtService)
     {
-        _config = config;
         _authRepository = authRepository;
         _jwtService = jwtService;
     }
