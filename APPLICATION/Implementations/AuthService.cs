@@ -20,6 +20,8 @@ public class AuthService : IAuthService
     {
         var response = new Response();
 
+        //TODO: Check email validity and password security?  -- maybe use FluentValidation
+
         if (payload.Password != payload.RePassword)
         {
             response.Message = "Passwords does not match!";
@@ -43,6 +45,8 @@ public class AuthService : IAuthService
         var response = new Response<AuthResponse>();
 
         var user = await _authRepository.GetUserData(payload.Email);
+
+        //TODO: Create User DTO
 
         if (user is null)
         {

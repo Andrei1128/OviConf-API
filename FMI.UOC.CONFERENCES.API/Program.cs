@@ -3,7 +3,7 @@ using APPLICATION.ServicesConfiguration;
 using PERSISTANCE.ServicesConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
+using var config = builder.Configuration;
 
 builder.Services.AddCustomAuthentication(config);
 builder.Services.AddCustomAuthorization();
