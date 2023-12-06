@@ -14,8 +14,9 @@ public class ConnectionFactory : IConnectionFactory
     public ConnectionFactory(IConfiguration config) => _config = config;
     public IDbConnection CreateMSSQLConnection()
     {
-        //TODO: Decrypt connection string
+        //TODO: Crypt and decrypt connection string
         IDbConnection connection = new SqlConnection(_config.GetSection("DBConnections:SqlServer").Value);
+
         connection.Open();
         return connection;
     }

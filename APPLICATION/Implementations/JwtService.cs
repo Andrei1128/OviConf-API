@@ -1,7 +1,9 @@
 ﻿using APPLICATION.Contracts;
 using DOMAIN.Models;
+using DOMAIN.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -21,10 +23,28 @@ public class JwtService : IJwtService
 
         var claims = new List<Claim>()
         {
-            new(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email,user.Email),
-            new(ClaimTypes.Role,user.Role)
+            new("Id",user.Id.ToString()),
+            new("Email",user.Email),
         };
+
+        IEnumerable<string> disctincRoles = user.Roles.Select(role => role.Value).Distinct();
+
+        foreach (var role in disctincRoles)
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+        var speakerConferenceIdsList = user.Roles
+                .Where(role => role.Value == IdentityData.Speaker)
+                .Select(role => role.ConferenceId);
+
+        string speakerConferenceIds = string.Join(",", speakerConferenceIdsList);
+        claims.Add(new Claim(ConferenceIdsClaim.Speaker, speakerConferenceIds));
+
+        var managerConferenceIdsList = user.Roles
+                .Where(role => role.Value == IdentityData.Manager)
+                .Select(role => role.ConferenceId);
+
+        string managerConferenceIds = string.Join(",", managerConferenceIdsList);
+        claims.Add(new Claim(ConferenceIdsClaim.Manager, managerConferenceIds));
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

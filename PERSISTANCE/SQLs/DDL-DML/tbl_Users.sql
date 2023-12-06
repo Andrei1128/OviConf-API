@@ -6,7 +6,6 @@ CREATE TABLE tbl_Users
 	(
 		Id INT IDENTITY(1,1) PRIMARY KEY,
 		Email VARCHAR(255),
-		Role VARCHAR(50),
 		Password VARCHAR(50)
 	);
 GO

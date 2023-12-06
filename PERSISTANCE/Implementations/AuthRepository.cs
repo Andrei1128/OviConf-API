@@ -19,6 +19,17 @@ public class AuthRepository : IAuthRepository
 
         return await connection.ExecuteScalarAsync<User>(AuthQueries.GET_USER_DATA, parameters, commandType: CommandType.StoredProcedure);
     }
+
+    public async Task<IEnumerable<Role>> GetUserRoles(int userId)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_userId", userId, DbType.String);
+
+        return await connection.QueryAsync<Role>(AuthQueries.GET_USER_ROLES, parameters, commandType: CommandType.StoredProcedure);
+    }
+
     public async Task<bool> RegisterUser(string email, string password)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();

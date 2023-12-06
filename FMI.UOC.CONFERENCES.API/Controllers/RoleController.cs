@@ -16,36 +16,59 @@ namespace API.Controllers
         [HttpPost("RequestHelperRole")]
         public async Task<IActionResult> RequestHelperRole([FromBody] int userId)
         {
-            var response = await _roleService.RequestRole(userId, IdentityData.Helper);
+            try
+            {
+                var response = await _roleService.RequestRole(userId, IdentityData.Helper);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestManagerRole")]
         public async Task<IActionResult> RequestManagerRole([FromBody] int userId, int conferenceId)
         {
-            var response = await _roleService.RequestRole(userId, IdentityData.Manager, conferenceId);
+            try
+            {
+                var response = await _roleService.RequestRole(userId, IdentityData.Manager, conferenceId);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
+
+
 
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestSpeakerRole")]
         public async Task<IActionResult> RequestSpeakerRole([FromBody] int userId, int conferenceId)
         {
-            var response = await _roleService.RequestRole(userId, IdentityData.Speaker, conferenceId);
+            try
+            {
+                var response = await _roleService.RequestRole(userId, IdentityData.Speaker, conferenceId);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.Admin)]
@@ -56,24 +79,38 @@ namespace API.Controllers
         [HttpPost("AcceptHelperRoleRequest")]
         public async Task<IActionResult> AcceptHelperRoleRequest([FromBody] int userId)
         {
-            var response = await _roleService.AcceptHelperRoleRequest(userId);
+            try
+            {
+                var response = await _roleService.AcceptHelperRoleRequest(userId);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.Admin)]
         [HttpPost("RefuseHelperRoleRequest")]
         public async Task<IActionResult> RefuseHelperRoleRequest([FromBody] int userId)
         {
-            var response = await _roleService.RefuseHelperRoleRequest(userId);
+            try
+            {
+                var response = await _roleService.RefuseHelperRoleRequest(userId);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.Helper)]
@@ -84,52 +121,98 @@ namespace API.Controllers
         [HttpPost("AcceptManagerRoleRequest")]
         public async Task<IActionResult> AcceptManagerRoleRequest([FromBody] int userId, int conferenceId)
         {
-            var response = await _roleService.AcceptManagerRoleRequest(userId, conferenceId);
+            try
+            {
+                var response = await _roleService.AcceptManagerRoleRequest(userId, conferenceId);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.Helper)]
         [HttpPost("RefuseManagerRoleRequest")]
         public async Task<IActionResult> RefuseManagerRoleRequest([FromBody] int userId, int conferenceId)
         {
-            var response = await _roleService.RefuseManagerRoleRequest(userId, conferenceId);
+            try
+            {
+                var response = await _roleService.RefuseManagerRoleRequest(userId, conferenceId);
 
-            if (response.IsSucces)
-                return Ok(response);
+                if (response.IsSucces)
+                    return Ok(response);
 
-            return BadRequest(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.Manager)]
         [HttpGet("GetSpeakerRoleRequests")]
-        public async Task<IActionResult> GetSpeakerRoleRequests() => Ok(await _roleService.GetSpeakerRoleRequests());
+        public async Task<IActionResult> GetSpeakerRoleRequests([FromBody] int conferenceId)
+        {
+            if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
+                return Unauthorized("You are not manager in this conference!");
+
+            return Ok(await _roleService.GetSpeakerRoleRequests());
+        }
 
         [Authorize(Policy = IdentityData.Manager)]
         [HttpPost("AcceptSpeakerRoleRequest")]
         public async Task<IActionResult> AcceptSpeakerRoleRequest([FromBody] int userId, int conferenceId)
         {
-            var response = await _roleService.AcceptSpeakerRoleRequest(userId, conferenceId);
+            if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
+                return Unauthorized("You are not manager in this conference!");
 
-            if (response.IsSucces)
-                return Ok(response);
+            try
+            {
+                var response = await _roleService.AcceptSpeakerRoleRequest(userId, conferenceId);
 
-            return BadRequest(response);
+                if (response.IsSucces)
+                    return Ok(response);
+
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
         }
 
         [Authorize(Policy = IdentityData.Manager)]
         [HttpPost("RefuseSpeakerRoleRequest")]
         public async Task<IActionResult> RefuseSpeakerRoleRequest([FromBody] int userId, int conferenceId)
         {
-            var response = await _roleService.RefuseSpeakerRoleRequest(userId, conferenceId);
+            if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
+                return Unauthorized("You are not manager in this conference!");
 
-            if (response.IsSucces)
-                return Ok(response);
+            try
+            {
+                var response = await _roleService.RefuseSpeakerRoleRequest(userId, conferenceId);
 
-            return BadRequest(response);
+                if (response.IsSucces)
+                    return Ok(response);
+
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+        private bool IsConferenceAuthorized(int conferenceId, string claimName)
+        {
+            var claims = HttpContext.User.Claims;
+            var confIds = claims.Single(c => c.Type == claimName).Value.Split(",").ToList();
+            return confIds.Contains(conferenceId.ToString());
         }
     }
 }

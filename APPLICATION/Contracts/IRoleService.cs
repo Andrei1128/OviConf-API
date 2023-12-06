@@ -4,7 +4,7 @@ namespace APPLICATION.Contracts;
 
 public interface IRoleService
 {
-    Task<Response> RequestRole(int userId, string role, int? conferenceId = null)
+    Task<Response> RequestRole(int userId, string role, int? conferenceId = null);
     Task<object> GetHelperRoleRequests();
     Task<Response> AcceptHelperRoleRequest(int userId);
     Task<Response> RefuseHelperRoleRequest(int userId);
