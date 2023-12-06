@@ -34,7 +34,7 @@ public class RoleService : IRoleService
         throw new NotImplementedException();
     }
 
-    public async Task<object> GetSpeakerRoleRequests()
+    public async Task<object> GetSpeakerRoleRequests(int conferenceId)
     {
         throw new NotImplementedException();
     }

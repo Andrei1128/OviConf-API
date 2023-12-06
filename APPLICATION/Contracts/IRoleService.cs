@@ -11,7 +11,7 @@ public interface IRoleService
     Task<object> GetManagerRoleRequests();
     Task<Response> AcceptManagerRoleRequest(int userId, int conferenceId);
     Task<Response> RefuseManagerRoleRequest(int userId, int conferenceId);
-    Task<object> GetSpeakerRoleRequests();
+    Task<object> GetSpeakerRoleRequests(int conferenceId);
     Task<Response> AcceptSpeakerRoleRequest(int userId, int conferenceId);
     Task<Response> RefuseSpeakerRoleRequest(int userId, int conferenceId);
 }

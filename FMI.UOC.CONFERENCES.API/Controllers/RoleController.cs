@@ -162,7 +162,7 @@ namespace API.Controllers
             if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
                 return Unauthorized("You are not manager in this conference!");
 
-            return Ok(await _roleService.GetSpeakerRoleRequests());
+            return Ok(await _roleService.GetSpeakerRoleRequests(conferenceId));
         }
 
         [Authorize(Policy = IdentityData.Manager)]

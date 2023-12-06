@@ -2,7 +2,7 @@
 
 public interface IRoleRepository
 {
-    Task<bool> RequestRole(int userId, string role, int? conferenceId = null);
+    Task RequestRole(int userId, string role, int? conferenceId = null);
     Task<object> GetHelperRoleRequests();
     Task<bool> AcceptHelperRoleRequest(int userId);
     Task<bool> RefuseHelperRoleRequest(int userId);

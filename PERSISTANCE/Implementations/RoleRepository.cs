@@ -55,7 +55,7 @@ public class RoleRepository : IRoleRepository
         throw new NotImplementedException();
     }
 
-    public async Task<bool> RequestRole(int userId, string role, int? conferenceId = null)
+    public async Task RequestRole(int userId, string role, int? conferenceId = null)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
@@ -64,7 +64,6 @@ public class RoleRepository : IRoleRepository
         parameters.Add("p_requestedRole", role, DbType.String);
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
 
-        //TODO: Add chase when conferenceId not null on procedure
-        return await connection.ExecuteScalarAsync<bool>(RoleQueries.REQUEST_ROLE, parameters, commandType: CommandType.StoredProcedure);
+        await connection.ExecuteAsync(RoleQueries.REQUEST_ROLE, parameters, commandType: CommandType.StoredProcedure);
     }
 }
