@@ -27,20 +27,20 @@ public class JwtService : IJwtService
             new("Email",user.Email),
         };
 
-        IEnumerable<string> disctincRoles = user.Roles.Select(role => role.Value).Distinct();
+        IEnumerable<string> disctinctRoles = user.Roles.Select(role => role.Name).Distinct();
 
-        foreach (var role in disctincRoles)
+        foreach (var role in disctinctRoles)
             claims.Add(new Claim(ClaimTypes.Role, role));
 
         var speakerConferenceIdsList = user.Roles
-                .Where(role => role.Value == IdentityData.Speaker)
+                .Where(role => role.Name == IdentityData.Speaker)
                 .Select(role => role.ConferenceId);
 
         string speakerConferenceIds = string.Join(",", speakerConferenceIdsList);
         claims.Add(new Claim(ConferenceIdsClaim.Speaker, speakerConferenceIds));
 
         var managerConferenceIdsList = user.Roles
-                .Where(role => role.Value == IdentityData.Manager)
+                .Where(role => role.Name == IdentityData.Manager)
                 .Select(role => role.ConferenceId);
 
         string managerConferenceIds = string.Join(",", managerConferenceIdsList);

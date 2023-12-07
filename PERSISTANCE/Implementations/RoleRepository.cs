@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DOMAIN.Models;
 using PERSISTANCE.Contracts;
 using PERSISTANCE.Queries;
 using System.Data;
@@ -10,49 +11,39 @@ public class RoleRepository : IRoleRepository
     private readonly IConnectionFactory _connectionFactory;
     public RoleRepository(IConnectionFactory connectionFactory) => _connectionFactory = connectionFactory;
 
-    public async Task<bool> AcceptHelperRoleRequest(int userId)
+    public async Task AcceptRoleRequest(int userId, string role, int? conferenceId = null)
     {
-        throw new NotImplementedException();
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_userId", userId, DbType.Int32);
+        parameters.Add("p_role", role, DbType.String);
+        parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
+
+        await connection.ExecuteAsync(RoleQueries.ACCEPT_ROLE_REQUEST, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<bool> AcceptManagerRoleRequest(int userId, int conferenceId)
+    public async Task<IEnumerable<Role>> GetRoleRequests(string role, int? conferenceId = null)
     {
-        throw new NotImplementedException();
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_role", role, DbType.String);
+        parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
+
+        return await connection.QueryAsync<Role>(RoleQueries.GET_ROLE_REQUESTS, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<bool> AcceptSpeakerRoleRequest(int userId, int conferenceId)
+    public async Task RefuseRoleRequest(int userId, string role, int? conferenceId = null)
     {
-        throw new NotImplementedException();
-    }
+        using var connection = _connectionFactory.CreateMSSQLConnection();
 
-    public async Task<object> GetHelperRoleRequests()
-    {
-        throw new NotImplementedException();
-    }
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_userId", userId, DbType.Int32);
+        parameters.Add("p_role", role, DbType.String);
+        parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
 
-    public async Task<object> GetManagerRoleRequests()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<object> GetSpeakerRoleRequests()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> RefuseHelperRoleRequest(int userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> RefuseManagerRoleRequest(int userId, int conferenceId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> RefuseSpeakerRoleRequest(int userId, int conferenceId)
-    {
-        throw new NotImplementedException();
+        await connection.ExecuteAsync(RoleQueries.REFUSE_ROLE_REQUESTS, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task RequestRole(int userId, string role, int? conferenceId = null)
@@ -61,7 +52,7 @@ public class RoleRepository : IRoleRepository
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_userId", userId, DbType.Int32);
-        parameters.Add("p_requestedRole", role, DbType.String);
+        parameters.Add("p_role", role, DbType.String);
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
 
         await connection.ExecuteAsync(RoleQueries.REQUEST_ROLE, parameters, commandType: CommandType.StoredProcedure);

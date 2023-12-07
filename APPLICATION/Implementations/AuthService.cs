@@ -21,7 +21,7 @@ public class AuthService : IAuthService
     {
         var response = new Response();
 
-        if (IsValidEmail(payload.Email))
+        if (!IsValidEmail(payload.Email))
         {
             response.Message = "Invalid email address!";
             return response;
@@ -33,7 +33,7 @@ public class AuthService : IAuthService
             return response;
         }
 
-        if (IsStrongPassword(payload.Password))
+        if (!IsStrongPassword(payload.Password))
         {
             response.Message = "Password is too weak!";
             return response;

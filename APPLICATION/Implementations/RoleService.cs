@@ -1,6 +1,8 @@
 ﻿using APPLICATION.Contracts;
+using DOMAIN.Models;
 using DOMAIN.Utilities;
 using PERSISTANCE.Contracts;
+using System.Data.SqlClient;
 
 namespace APPLICATION.Implementations;
 
@@ -9,62 +11,50 @@ public class RoleService : IRoleService
     private readonly IRoleRepository _roleRepository;
     public RoleService(IRoleRepository roleRepository) => _roleRepository = roleRepository;
 
-    public async Task<Response> AcceptHelperRoleRequest(int userId)
+    public async Task<Response> AcceptRoleRequest(int userId, string role, int? conferenceId = null)
     {
-        throw new NotImplementedException();
+        var response = new Response();
+
+        await _roleRepository.AcceptRoleRequest(userId, role, conferenceId);
+
+        response.IsSucces = true;
+        response.Message = "Request accepted succesfully!";
+        return response;
     }
 
-    public async Task<Response> AcceptManagerRoleRequest(int userId, int conferenceId)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<IEnumerable<Role>> GetRoleRequests(string role, int? conferenceId = null) => await _roleRepository.GetRoleRequests(role, conferenceId);
 
-    public async Task<Response> AcceptSpeakerRoleRequest(int userId, int conferenceId)
+    public async Task<Response> RefuseRoleRequest(int userId, string role, int? conferenceId = null)
     {
-        throw new NotImplementedException();
-    }
+        var response = new Response();
 
-    public async Task<object> GetHelperRoleRequests()
-    {
-        throw new NotImplementedException();
-    }
+        await _roleRepository.RefuseRoleRequest(userId, role, conferenceId);
 
-    public async Task<object> GetManagerRoleRequests()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<object> GetSpeakerRoleRequests(int conferenceId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Response> RefuseHelperRoleRequest(int userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Response> RefuseManagerRoleRequest(int userId, int conferenceId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Response> RefuseSpeakerRoleRequest(int userId, int conferenceId)
-    {
-        throw new NotImplementedException();
+        response.IsSucces = true;
+        response.Message = "Request refused succesfully!";
+        return response;
     }
 
     public async Task<Response> RequestRole(int userId, string role, int? conferenceId = null)
     {
         var response = new Response();
 
-        if (await _roleRepository.RequestRole(userId, role, conferenceId))
+        try
         {
+            await _roleRepository.RequestRole(userId, role, conferenceId);
+
             response.IsSucces = true;
             response.Message = "Request done succesfully!";
+            return response;
         }
-
-        response.Message = "You already have this role or a higher one!";
-        return response;
+        catch (SqlException ex)
+        {
+            if (ex.Number == SqlExceptionCodes.UNIQUE_CONSTRAINT_VIOLATION)
+            {
+                response.Message = "You already have this role or a higher one!";
+                return response;
+            }
+            else throw;
+        }
     }
 }
