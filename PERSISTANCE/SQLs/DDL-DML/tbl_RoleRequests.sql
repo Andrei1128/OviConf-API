@@ -9,6 +9,8 @@ CREATE TABLE tbl_RoleRequests
 		RequestedRole VARCHAR(50),
 		ConferenceId INT,
 		RequestedAt DATETIME,
+		AcceptedAt DATETIME,
+		AcceptedBy VARCHAR(255),
 		IsAccepted BIT,
 	);
 GO

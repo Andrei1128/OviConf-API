@@ -1,5 +1,7 @@
 ﻿using APPLICATION.Contracts;
 using DOMAIN.Requests;
+using DOMAIN.Responses;
+using DOMAIN.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -12,7 +14,7 @@ public class AuthController : ControllerBase
     public AuthController(IAuthService authService) => _authService = authService;
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest payload)
+    public async Task<ActionResult<Response>> Register([FromBody] RegisterRequest payload)
     {
         var response = await _authService.Register(payload);
 
@@ -23,7 +25,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest payload)
+    public async Task<ActionResult<Response<AuthResponse>>> Login([FromBody] LoginRequest payload)
     {
         var response = await _authService.Login(payload);
 

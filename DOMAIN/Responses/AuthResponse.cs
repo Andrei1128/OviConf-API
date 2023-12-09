@@ -1,9 +1,9 @@
-﻿using DOMAIN.Models;
+﻿using DOMAIN.DTOs;
 
 namespace DOMAIN.Responses;
 
 public class AuthResponse
 {
-    public User User { get; set; }
+    public UserDTO User { get; set; }
     public string Jwt { get; set; } = string.Empty;
 }

@@ -23,7 +23,7 @@ public class RoleRepository : IRoleRepository
         await connection.ExecuteAsync(RoleQueries.ACCEPT_ROLE_REQUEST, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<Role>> GetRoleRequests(string role, int? conferenceId = null)
+    public async Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
@@ -31,7 +31,7 @@ public class RoleRepository : IRoleRepository
         parameters.Add("p_role", role, DbType.String);
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
 
-        return await connection.QueryAsync<Role>(RoleQueries.GET_ROLE_REQUESTS, parameters, commandType: CommandType.StoredProcedure);
+        return await connection.QueryAsync<RoleRequest>(RoleQueries.GET_ROLE_REQUESTS, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task RefuseRoleRequest(int userId, string role, int? conferenceId = null)

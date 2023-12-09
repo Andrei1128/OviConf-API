@@ -22,7 +22,7 @@ public class RoleService : IRoleService
         return response;
     }
 
-    public async Task<IEnumerable<Role>> GetRoleRequests(string role, int? conferenceId = null) => await _roleRepository.GetRoleRequests(role, conferenceId);
+    public async Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null) => await _roleRepository.GetRoleRequests(role, conferenceId);
 
     public async Task<Response> RefuseRoleRequest(int userId, string role, int? conferenceId = null)
     {
@@ -51,7 +51,7 @@ public class RoleService : IRoleService
         {
             if (ex.Number == SqlExceptionCodes.UNIQUE_CONSTRAINT_VIOLATION)
             {
-                response.Message = "You already have this role or a higher one!";
+                response.Message = "You already have this role!";
                 return response;
             }
             else throw;

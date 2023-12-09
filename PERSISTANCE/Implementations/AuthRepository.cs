@@ -30,7 +30,7 @@ public class AuthRepository : IAuthRepository
         return await connection.QueryAsync<Role>(AuthQueries.GET_USER_ROLES, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<bool> RegisterUser(string email, string password)
+    public async Task RegisterUser(string email, string password)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
@@ -38,6 +38,6 @@ public class AuthRepository : IAuthRepository
         parameters.Add("p_email", email, DbType.String);
         parameters.Add("p_password", password, DbType.String);
 
-        return await connection.ExecuteScalarAsync<bool>(AuthQueries.REGISTER_USER, parameters, commandType: CommandType.StoredProcedure);
+        await connection.ExecuteAsync(AuthQueries.REGISTER_USER, parameters, commandType: CommandType.StoredProcedure);
     }
 }

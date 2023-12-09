@@ -4,7 +4,7 @@ using PERSISTANCE.Implementations;
 
 namespace PERSISTANCE.ServicesConfiguration;
 
-public static class ServicesConfiguration
+public static class PersServicesConfiguration
 {
     public static void AddPersistanceServices(this IServiceCollection services)
     {

@@ -1,11 +1,15 @@
 using API.ServicesConfiguration;
 using APPLICATION.ServicesConfiguration;
 using PERSISTANCE.ServicesConfiguration;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-using var config = builder.Configuration;
 
-builder.Services.AddCustomAuthentication(config);
+var appSettings = builder.Configuration.BindAppSettings();
+
+Log.Logger = APIServicesConfiguration.CreateLogger(appSettings.DBConnections.SqlServer);
+
+builder.Services.AddCustomAuthentication(appSettings.JwtSettings);
 builder.Services.AddCustomAuthorization();
 
 builder.Services.AddControllers();

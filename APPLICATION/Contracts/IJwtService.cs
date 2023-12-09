@@ -1,8 +1,8 @@
-﻿using DOMAIN.Models;
+﻿using DOMAIN.DTOs;
 
 namespace APPLICATION.Contracts;
 
 public interface IJwtService
 {
-    string GenerateToken(User user);
+    string GenerateToken(UserDTO user);
 }
