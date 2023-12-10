@@ -1,4 +1,5 @@
-﻿using APPLICATION.Contracts;
+﻿using API.Utilities;
+using APPLICATION.Contracts;
 using DOMAIN.Models;
 using DOMAIN.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -58,13 +59,13 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.Helper)]
         [HttpGet("GetManagerRoleRequests")]
-        public async Task<ActionResult<IEnumerable<RoleRequest>>> GetManagerRoleRequests([FromBody] int conferenceId) => Ok(await _roleService.GetRoleRequests(IdentityData.Manager, conferenceId));
+        public async Task<ActionResult<IEnumerable<RoleRequest>>> GetManagerRoleRequests([FromQuery] int conferenceId) => Ok(await _roleService.GetRoleRequests(IdentityData.Manager, conferenceId));
 
         [Authorize(Policy = IdentityData.Manager)]
         [HttpGet("GetSpeakerRoleRequests")]
-        public async Task<ActionResult<IEnumerable<RoleRequest>>> GetSpeakerRoleRequests([FromBody] int conferenceId)
+        public async Task<ActionResult<IEnumerable<RoleRequest>>> GetSpeakerRoleRequests([FromQuery] int conferenceId)
         {
-            if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
+            if (!AuthHelper.IsConferenceAuthorized(HttpContext.User.Claims, conferenceId, ConferenceIdsClaim.Manager))
                 return Unauthorized("You are not manager in this conference!");
 
             return Ok(await _roleService.GetRoleRequests(IdentityData.Speaker, conferenceId));
@@ -74,9 +75,9 @@ namespace API.Controllers
         #region ACCEPT_ROLE_REQUEST
         [Authorize(Policy = IdentityData.Admin)]
         [HttpPost("AcceptHelperRoleRequest")]
-        public async Task<ActionResult<Response>> AcceptHelperRoleRequest([FromBody] int userId)
+        public async Task<ActionResult<Response>> AcceptHelperRoleRequest([FromBody] int requestId)
         {
-            var response = await _roleService.AcceptRoleRequest(userId, IdentityData.Helper);
+            var response = await _roleService.AcceptRoleRequest(requestId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -86,9 +87,9 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.Helper)]
         [HttpPost("AcceptManagerRoleRequest")]
-        public async Task<ActionResult<Response>> AcceptManagerRoleRequest([FromBody] int userId, int conferenceId)
+        public async Task<ActionResult<Response>> AcceptManagerRoleRequest([FromBody] int requestId)
         {
-            var response = await _roleService.AcceptRoleRequest(userId, IdentityData.Manager, conferenceId);
+            var response = await _roleService.AcceptRoleRequest(requestId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -98,12 +99,12 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.Manager)]
         [HttpPost("AcceptSpeakerRoleRequest")]
-        public async Task<ActionResult<Response>> AcceptSpeakerRoleRequest([FromBody] int userId, int conferenceId)
+        public async Task<ActionResult<Response>> AcceptSpeakerRoleRequest([FromBody] int requestId, int conferenceId)
         {
-            if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
+            if (!AuthHelper.IsConferenceAuthorized(HttpContext.User.Claims, conferenceId, ConferenceIdsClaim.Manager))
                 return Unauthorized("You are not manager in this conference!");
 
-            var response = await _roleService.AcceptRoleRequest(userId, IdentityData.Speaker, conferenceId);
+            var response = await _roleService.AcceptRoleRequest(requestId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -115,9 +116,9 @@ namespace API.Controllers
         #region REFUSE_ROLE_REQUEST
         [Authorize(Policy = IdentityData.Admin)]
         [HttpPost("RefuseHelperRoleRequest")]
-        public async Task<ActionResult<Response>> RefuseHelperRoleRequest([FromBody] int userId)
+        public async Task<ActionResult<Response>> RefuseHelperRoleRequest([FromBody] int requestId)
         {
-            var response = await _roleService.RefuseRoleRequest(userId, IdentityData.Helper);
+            var response = await _roleService.RefuseRoleRequest(requestId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -127,9 +128,9 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.Helper)]
         [HttpPost("RefuseManagerRoleRequest")]
-        public async Task<ActionResult<Response>> RefuseManagerRoleRequest([FromBody] int userId, int conferenceId)
+        public async Task<ActionResult<Response>> RefuseManagerRoleRequest([FromBody] int requestId)
         {
-            var response = await _roleService.RefuseRoleRequest(userId, IdentityData.Manager, conferenceId);
+            var response = await _roleService.RefuseRoleRequest(requestId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -139,12 +140,12 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.Manager)]
         [HttpPost("RefuseSpeakerRoleRequest")]
-        public async Task<ActionResult<Response>> RefuseSpeakerRoleRequest([FromBody] int userId, int conferenceId)
+        public async Task<ActionResult<Response>> RefuseSpeakerRoleRequest([FromBody] int requestId, int conferenceId)
         {
-            if (!IsConferenceAuthorized(conferenceId, ConferenceIdsClaim.Manager))
+            if (!AuthHelper.IsConferenceAuthorized(HttpContext.User.Claims, conferenceId, ConferenceIdsClaim.Manager))
                 return Unauthorized("You are not manager in this conference!");
 
-            var response = await _roleService.RefuseRoleRequest(userId, IdentityData.Speaker, conferenceId);
+            var response = await _roleService.RefuseRoleRequest(requestId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -152,12 +153,5 @@ namespace API.Controllers
             return BadRequest(response);
         }
         #endregion
-
-        private bool IsConferenceAuthorized(int conferenceId, string claimName)
-        {
-            var claims = HttpContext.User.Claims;
-            var confIds = claims.Single(c => c.Type == claimName).Value.Split(",").ToList();
-            return confIds.Contains(conferenceId.ToString());
-        }
     }
 }

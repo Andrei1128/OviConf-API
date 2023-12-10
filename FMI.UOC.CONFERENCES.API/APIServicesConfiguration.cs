@@ -1,6 +1,8 @@
-﻿using DOMAIN.Utilities;
+﻿using API.Middlewares;
+using DOMAIN.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using System.Text;
@@ -9,7 +11,49 @@ namespace API.ServicesConfiguration;
 
 public static class APIServicesConfiguration
 {
-    public static AppSettings BindAppSettings(this ConfigurationManager config) => config.GetSection(nameof(AppSettings)).Get<AppSettings>()!;
+    public static void AddCustomSwaggerGen(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(opt =>
+        {
+            opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            });
+            opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                    new string[]{}
+                }
+            });
+        });
+    }
+    public static void AddMiddlewares(this IServiceCollection services)
+    {
+        services.AddScoped<ExceptionHandlerMiddleware>();
+        services.AddScoped<JwtUnwrapperMiddleware>();
+    }
+    public static AppSettings BindAppSettings(this WebApplicationBuilder builder)
+    {
+        var appSettings = new AppSettings();
+        builder.Configuration.GetSection(nameof(AppSettings)).Bind(appSettings);
+
+        builder.Services.AddSingleton(appSettings);
+
+        return appSettings;
+    }
     public static Serilog.Core.Logger CreateLogger(string SqlServerConnectionString)
     {
         return new LoggerConfiguration()

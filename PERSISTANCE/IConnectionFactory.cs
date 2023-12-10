@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DOMAIN.Utilities;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -10,12 +10,12 @@ public interface IConnectionFactory
 }
 public class ConnectionFactory : IConnectionFactory
 {
-    private readonly IConfiguration _config;
-    public ConnectionFactory(IConfiguration config) => _config = config;
+    private readonly AppSettings _appSettings;
+    public ConnectionFactory(AppSettings appSettings) => _appSettings = appSettings;
     public IDbConnection CreateMSSQLConnection()
     {
         //TODO: Crypt and decrypt connection string
-        IDbConnection connection = new SqlConnection(_config.GetSection("DBConnections:SqlServer").Value);
+        IDbConnection connection = new SqlConnection(_appSettings.DBConnections.SqlServer);
 
         connection.Open();
         return connection;

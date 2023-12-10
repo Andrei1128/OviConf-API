@@ -5,7 +5,6 @@ using DOMAIN.Responses;
 using DOMAIN.Utilities;
 using PERSISTANCE.Contracts;
 using System.Data.SqlClient;
-using System.Text.RegularExpressions;
 using BC = BCrypt.Net.BCrypt;
 
 namespace APPLICATION.Implementations;
@@ -24,21 +23,12 @@ public class AuthService : IAuthService
     {
         var response = new Response();
 
-        if (!IsValidEmail(payload.Email))
-        {
-            response.Message = "Invalid email address!";
-            return response;
-        }
+        var validationResult = new RegisterRequestValidator().Validate(payload);
 
-        if (payload.Password != payload.RePassword)
+        if (!validationResult.IsValid)
         {
-            response.Message = "Passwords does not match!";
-            return response;
-        }
-
-        if (!IsStrongPassword(payload.Password))
-        {
-            response.Message = "Password is too weak!";
+            response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            response.Message = "Invalid data!";
             return response;
         }
 
@@ -46,7 +36,7 @@ public class AuthService : IAuthService
 
         try
         {
-            await _authRepository.RegisterUser(payload.Email, hashedPassword);
+            await _authRepository.RegisterUser(payload.Email, payload.Name, hashedPassword);
 
             response.IsSucces = true;
             response.Message = "Account created!";
@@ -62,21 +52,6 @@ public class AuthService : IAuthService
             else throw;
         }
     }
-
-    private bool IsValidEmail(string email)
-    {
-        string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-        Regex regex = new Regex(pattern);
-        return regex.IsMatch(email);
-    }
-
-    private bool IsStrongPassword(string password)
-    {
-        string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$";
-        Regex regex = new Regex(pattern);
-        return regex.IsMatch(password);
-    }
-
     public async Task<Response<AuthResponse>> Login(LoginRequest payload)
     {
         var response = new Response<AuthResponse>();
@@ -88,6 +63,8 @@ public class AuthService : IAuthService
             response.Message = "Invalid Email or Password!";
             return response;
         }
+
+        var pass = BC.HashPassword(payload.Password);
 
         if (BC.Verify(payload.Password, user.Password))
         {

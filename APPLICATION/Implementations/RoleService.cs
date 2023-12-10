@@ -11,11 +11,11 @@ public class RoleService : IRoleService
     private readonly IRoleRepository _roleRepository;
     public RoleService(IRoleRepository roleRepository) => _roleRepository = roleRepository;
 
-    public async Task<Response> AcceptRoleRequest(int userId, string role, int? conferenceId = null)
+    public async Task<Response> AcceptRoleRequest(int requestId)
     {
         var response = new Response();
 
-        await _roleRepository.AcceptRoleRequest(userId, role, conferenceId);
+        await _roleRepository.AcceptRoleRequest(requestId);
 
         response.IsSucces = true;
         response.Message = "Request accepted succesfully!";
@@ -24,11 +24,11 @@ public class RoleService : IRoleService
 
     public async Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null) => await _roleRepository.GetRoleRequests(role, conferenceId);
 
-    public async Task<Response> RefuseRoleRequest(int userId, string role, int? conferenceId = null)
+    public async Task<Response> RefuseRoleRequest(int requestId)
     {
         var response = new Response();
 
-        await _roleRepository.RefuseRoleRequest(userId, role, conferenceId);
+        await _roleRepository.RefuseRoleRequest(requestId);
 
         response.IsSucces = true;
         response.Message = "Request refused succesfully!";
@@ -51,7 +51,7 @@ public class RoleService : IRoleService
         {
             if (ex.Number == SqlExceptionCodes.UNIQUE_CONSTRAINT_VIOLATION)
             {
-                response.Message = "You already have this role!";
+                response.Message = "You already have this role or role request!";
                 return response;
             }
             else throw;

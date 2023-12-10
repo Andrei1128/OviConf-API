@@ -1,8 +1,6 @@
 ﻿using APPLICATION.Contracts;
 using DOMAIN.DTOs;
 using DOMAIN.Utilities;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,12 +11,10 @@ namespace APPLICATION.Implementations;
 
 public class JwtService : IJwtService
 {
-    private readonly IConfiguration _config;
     private readonly AppSettings _appSettings;
-    public JwtService(IConfiguration config, IOptions<AppSettings> options)
+    public JwtService(AppSettings appSettings)
     {
-        _config = config;
-        _appSettings = options.Value;
+        _appSettings = appSettings;
     }
     public string GenerateToken(UserDTO user)
     {
@@ -30,6 +26,7 @@ public class JwtService : IJwtService
         var claims = new List<Claim>()
         {
             new("Id",user.Id.ToString()),
+            new("Name",user.Name),
             new("Email",user.Email),
         };
 
@@ -56,8 +53,8 @@ public class JwtService : IJwtService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(expiresIn),
-            Issuer = _config.GetSection(_appSettings.JwtSettings.Issuer).Value,
-            Audience = _config.GetSection(_appSettings.JwtSettings.Audience).Value,
+            Issuer = _appSettings.JwtSettings.Issuer,
+            Audience = _appSettings.JwtSettings.Audience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
         };
 
