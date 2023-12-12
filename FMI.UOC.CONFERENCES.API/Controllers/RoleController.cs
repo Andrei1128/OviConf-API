@@ -17,9 +17,9 @@ namespace API.Controllers
         #region REQUEST_ROLE
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestHelperRole")]
-        public async Task<ActionResult<Response>> RequestHelperRole([FromBody] int userId)
+        public async Task<ActionResult<Response>> RequestHelperRole()
         {
-            var response = await _roleService.RequestRole(userId, IdentityData.Helper);
+            var response = await _roleService.RequestRole(IdentityData.Helper);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -29,9 +29,9 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestManagerRole")]
-        public async Task<ActionResult<Response>> RequestManagerRole([FromBody] int userId, int conferenceId)
+        public async Task<ActionResult<Response>> RequestManagerRole(int conferenceId)
         {
-            var response = await _roleService.RequestRole(userId, IdentityData.Manager, conferenceId);
+            var response = await _roleService.RequestRole(IdentityData.Manager, conferenceId);
 
             if (response.IsSucces)
                 return Ok(response);
@@ -41,9 +41,9 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestSpeakerRole")]
-        public async Task<ActionResult<Response>> RequestSpeakerRole([FromBody] int userId, int conferenceId)
+        public async Task<ActionResult<Response>> RequestSpeakerRole(int conferenceId)
         {
-            var response = await _roleService.RequestRole(userId, IdentityData.Speaker, conferenceId);
+            var response = await _roleService.RequestRole(IdentityData.Speaker, conferenceId);
 
             if (response.IsSucces)
                 return Ok(response);

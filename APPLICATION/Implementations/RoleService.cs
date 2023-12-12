@@ -9,7 +9,12 @@ namespace APPLICATION.Implementations;
 public class RoleService : IRoleService
 {
     private readonly IRoleRepository _roleRepository;
-    public RoleService(IRoleRepository roleRepository) => _roleRepository = roleRepository;
+    private readonly ThisUser _thisUser;
+    public RoleService(IRoleRepository roleRepository, ThisUser thisUser)
+    {
+        _thisUser = thisUser;
+        _roleRepository = roleRepository;
+    }
 
     public async Task<Response> AcceptRoleRequest(int requestId)
     {
@@ -35,13 +40,13 @@ public class RoleService : IRoleService
         return response;
     }
 
-    public async Task<Response> RequestRole(int userId, string role, int? conferenceId = null)
+    public async Task<Response> RequestRole(string role, int? conferenceId = null)
     {
         var response = new Response();
 
         try
         {
-            await _roleRepository.RequestRole(userId, role, conferenceId);
+            await _roleRepository.RequestRole(_thisUser.Id, role, conferenceId);
 
             response.IsSucces = true;
             response.Message = "Request done succesfully!";
