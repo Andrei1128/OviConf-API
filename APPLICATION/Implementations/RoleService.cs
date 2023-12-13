@@ -16,24 +16,24 @@ public class RoleService : IRoleService
         _roleRepository = roleRepository;
     }
 
+    public async Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null) => await _roleRepository.GetRoleRequests(role, conferenceId);
+
     public async Task<Response> AcceptRoleRequest(int requestId)
     {
         var response = new Response();
 
-        await _roleRepository.AcceptRoleRequest(requestId);
+        await _roleRepository.AcceptRoleRequest(requestId, _thisUser.Id);
 
         response.IsSucces = true;
         response.Message = "Request accepted succesfully!";
         return response;
     }
 
-    public async Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null) => await _roleRepository.GetRoleRequests(role, conferenceId);
-
     public async Task<Response> RefuseRoleRequest(int requestId)
     {
         var response = new Response();
 
-        await _roleRepository.RefuseRoleRequest(requestId);
+        await _roleRepository.RefuseRoleRequest(requestId, _thisUser.Id);
 
         response.IsSucces = true;
         response.Message = "Request refused succesfully!";

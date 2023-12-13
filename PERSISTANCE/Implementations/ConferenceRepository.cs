@@ -17,6 +17,8 @@ public class ConferenceRepository : IConferenceRepository
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_name", payload.Name, DbType.String);
+        parameters.Add("p_startDate", payload.StartDate, DbType.DateTime);
+        parameters.Add("p_endDate", payload.EndDate, DbType.DateTime);
 
         await connection.ExecuteAsync(ConferenceQueries.CREATE_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
     }
@@ -36,5 +38,26 @@ public class ConferenceRepository : IConferenceRepository
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
         return await connection.QueryAsync<Conference>(ConferenceQueries.GET_CONFERENCES, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task<IEnumerable<Conference>> GetMyConferences(int userId)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_userId", userId, DbType.Int32);
+
+        return await connection.QueryAsync<Conference>(ConferenceQueries.GET_MY_CONFERENCES, parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task RegisterAtConference(int conferenceId, int userId)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
+        parameters.Add("p_userId", userId, DbType.Int32);
+
+        await connection.ExecuteAsync(ConferenceQueries.REGISTER_AT_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
     }
 }

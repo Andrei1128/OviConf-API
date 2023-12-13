@@ -3,13 +3,25 @@ using DOMAIN.DTOs;
 using DOMAIN.Models;
 using DOMAIN.Utilities;
 using PERSISTANCE.Contracts;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace APPLICATION.Implementations;
 
 public class ConferenceService : IConferenceService
 {
     private readonly IConferenceRepository _conferenceRepository;
-    public ConferenceService(IConferenceRepository conferenceRepository) => _conferenceRepository = conferenceRepository;
+    private readonly ThisUser _thisUser;
+    public ConferenceService(IConferenceRepository conferenceRepository, ThisUser thisUser)
+    {
+        _conferenceRepository = conferenceRepository;
+        _thisUser = thisUser;
+    }
+
+    public async Task<Conference?> GetConference(int id) => await _conferenceRepository.GetConference(id);
+    public async Task<IEnumerable<Conference>> GetConferences() => await _conferenceRepository.GetConferences();
+    public async Task<IEnumerable<Conference>> GetMyConferences() => await _conferenceRepository.GetMyConferences(_thisUser.Id);
+
     public async Task<Response> CreateConference(ConferenceDTO payload)
     {
         var response = new Response();
@@ -30,7 +42,26 @@ public class ConferenceService : IConferenceService
         return response;
     }
 
-    public async Task<Conference?> GetConference(int id) => await _conferenceRepository.GetConference(id);
+    public async Task<Response> RegisterAtConference(int conferenceId)
+    {
+        var response = new Response();
 
-    public async Task<IEnumerable<Conference>> GetConferences() => await _conferenceRepository.GetConferences();
+        try
+        {
+            await _conferenceRepository.RegisterAtConference(conferenceId, _thisUser.Id);
+
+            response.IsSucces = true;
+            response.Message = "Registered successfully!!";
+            return response;
+        }
+        catch (SqlException ex)
+        {
+            if (ex.Number == SqlExceptionCodes.UNIQUE_CONSTRAINT_VIOLATION)
+            {
+                response.Message = "You are already registered at this conference!";
+                return response;
+            }
+            else throw;
+        }
+    }
 }

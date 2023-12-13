@@ -10,11 +10,11 @@ CREATE TABLE tbl_Roles
         Role VARCHAR(50) NOT NULL,
         RequestedAt DATETIME,
         OperatedAt DATETIME,
-        OperatedBy VARCHAR(255),
+        OperatedBy INT,
         IsAccepted BIT,
         CONSTRAINT uq_Role UNIQUE(UserId, ConferenceId, Role)
     );
 GO
 INSERT INTO tbl_Roles (UserId,Role,RequestedAt,OperatedAt,OperatedBy,IsAccepted)
-	VALUES(1,'Admin',GETDATE(),GETDATE(),'System',1);
+	VALUES(2,'Admin',GETDATE(),GETDATE(),1,1);
 GO

@@ -1,7 +1,7 @@
 ﻿USE OviConf;
 GO
 CREATE OR ALTER PROCEDURE usp_AcceptRoleRequest 
-	@p_operatedBy nvarchar(255),
+	@p_operatedBy INT,
 	@p_requestId INT
 AS
 BEGIN

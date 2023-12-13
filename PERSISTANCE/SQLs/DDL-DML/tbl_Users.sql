@@ -10,6 +10,9 @@ CREATE TABLE tbl_Users
 		Password VARCHAR(255)
 	);
 GO
+INSERT INTO tbl_Users (Name)
+	VALUES('system');
+GO
 INSERT INTO tbl_Users (Name,Email,Password)
 	VALUES('admin','admin','$2a$11$PdE31JFDLSQCutnnyX2JQupT8gCApOq/qtC2EZ4lNGsX4SHC68Dre');
 GO

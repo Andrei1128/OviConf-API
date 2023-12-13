@@ -26,6 +26,22 @@ namespace API.Controllers
             return BadRequest(response);
         }
 
+        [HttpPost("RegisterAtConference")]
+        [Authorize(Policy = IdentityData.User)]
+        public async Task<ActionResult<Response>> RegisterAtConference([FromBody] int conferenceId)
+        {
+            var response = await _conferenceService.RegisterAtConference(conferenceId);
+
+            if (response.IsSucces)
+                return Ok(response);
+
+            return BadRequest(response);
+        }
+
+        [HttpGet("GetMyConferences")]
+        [Authorize(Policy = IdentityData.User)]
+        public async Task<ActionResult<IEnumerable<Conference>>> GetMyConferences() => Ok(await _conferenceService.GetMyConferences());
+
         [HttpGet("GetConferences")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Conference>>> GetConferences() => Ok(await _conferenceService.GetConferences());
