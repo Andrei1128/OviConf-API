@@ -75,5 +75,6 @@ public class ConferenceService : IConferenceService
 
         response.IsSucces = true;
         response.Message = "Success!";
+        return response;
     }
 }
