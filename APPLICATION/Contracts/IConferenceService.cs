@@ -11,4 +11,6 @@ public interface IConferenceService
     public Task<Conference?> GetConference(int id);
     public Task<Response> RegisterAtConference(int conferenceId);
     public Task<IEnumerable<Conference>> GetMyConferences();
+    public Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role);
+    public Task<Response> AddNavItem(NavItem navItem);
 }

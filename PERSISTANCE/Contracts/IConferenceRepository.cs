@@ -10,4 +10,6 @@ public interface IConferenceRepository
     Task<Conference?> GetConference(int id);
     Task RegisterAtConference(int conferenceId, int userId);
     Task<IEnumerable<Conference>> GetMyConferences(int userId);
+    Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role);
+    Task AddNavItem(NavItem navItem);
 }

@@ -38,6 +38,18 @@ namespace API.Controllers
             return BadRequest(response);
         }
 
+        [HttpPost("AddNavItem")]
+        [Authorize(Policy = IdentityData.User)]
+        public async Task<ActionResult<Response>> AddNavItem([FromBody] NavItem navItem)
+        {
+            var response = await _conferenceService.AddNavItem(navItem);
+
+            if (response.IsSucces)
+                return Ok(response);
+
+            return BadRequest(response);
+        }
+
         [HttpGet("GetMyConferences")]
         [Authorize(Policy = IdentityData.User)]
         public async Task<ActionResult<IEnumerable<Conference>>> GetMyConferences() => Ok(await _conferenceService.GetMyConferences());
@@ -49,5 +61,14 @@ namespace API.Controllers
         [HttpGet("GetConference")]
         [AllowAnonymous]
         public async Task<ActionResult<Conference?>> GetConference([FromQuery] int id) => Ok(await _conferenceService.GetConference(id));
+        [HttpGet("GetParticipants")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetParticipants([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.User));
+        [HttpGet("GetSpeakers")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetSpeakers([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Speaker));
+        [HttpGet("GetManagers")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetManagers([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Manager));
     }
 }

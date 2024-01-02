@@ -64,4 +64,16 @@ public class ConferenceService : IConferenceService
             else throw;
         }
     }
+
+    public async Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role) => await _conferenceRepository.GetPeople(conferenceId, role);
+
+    public async Task<Response> AddNavItem(NavItem navItem)
+    {
+        var response = new Response();
+
+        await _conferenceRepository.AddNavItem(navItem);
+
+        response.IsSucces = true;
+        response.Message = "Success!";
+    }
 }
