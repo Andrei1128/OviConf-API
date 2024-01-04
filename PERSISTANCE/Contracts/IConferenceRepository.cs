@@ -12,4 +12,8 @@ public interface IConferenceRepository
     Task<IEnumerable<Conference>> GetMyConferences(int userId);
     Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role);
     Task AddNavItem(NavItem navItem);
+    Task UpdateNavItem(NavItem navItem);
+    Task UpdateConference(ConferenceDTO payload);
+    Task<IEnumerable<NavItemDTO>> GetNavItems(int conferenceId);
+    Task<string> GetNavItemContent(int navItemId);
 }

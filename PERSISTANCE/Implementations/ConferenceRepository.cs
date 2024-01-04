@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using DOMAIN.DTOs;
 using DOMAIN.Models;
-using DOMAIN.Utilities;
 using PERSISTANCE.Contracts;
 using PERSISTANCE.Queries;
 using System.Data;
@@ -57,17 +56,10 @@ public class ConferenceRepository : IConferenceRepository
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
+        parameters.Add("p_role", role, DbType.String);
 
-        return await connection.QueryAsync<UserDTO>(GetPeopleSql(role), parameters, commandType: CommandType.StoredProcedure);
+        return await connection.QueryAsync<UserDTO>(ConferenceQueries.GET_PEOPLES, parameters, commandType: CommandType.StoredProcedure);
     }
-
-    private string GetPeopleSql(string role) => role switch
-    {
-        IdentityData.User => ConferenceQueries.GET_PARTICIPANTS,
-        IdentityData.Speaker => ConferenceQueries.GET_SPEAKERS,
-        IdentityData.Manager => ConferenceQueries.GET_MANAGERS,
-        _ => throw new ArgumentException("Invalid role!")
-    };
 
     public async Task RegisterAtConference(int conferenceId, int userId)
     {
@@ -91,5 +83,51 @@ public class ConferenceRepository : IConferenceRepository
         parameters.Add("p_order", navItem.Order ?? 0, DbType.Int32);
 
         await connection.ExecuteAsync(ConferenceQueries.ADD_NAV_ITEM, parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task UpdateNavItem(NavItem navItem)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_id", navItem.Id, DbType.Int32);
+        parameters.Add("p_title", navItem.Title, DbType.String);
+        parameters.Add("p_content", navItem.Content, DbType.String);
+        parameters.Add("p_order", navItem.Order ?? 0, DbType.Int32);
+
+        await connection.ExecuteAsync(ConferenceQueries.UPDATE_NAV_ITEM, parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task UpdateConference(ConferenceDTO payload)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_id", payload.Id, DbType.Int32);
+        parameters.Add("p_name", payload.Name, DbType.String);
+        parameters.Add("p_startDate", payload.StartDate, DbType.DateTime);
+        parameters.Add("p_endDate", payload.EndDate, DbType.DateTime);
+
+        await connection.ExecuteAsync(ConferenceQueries.UPDATE_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task<IEnumerable<NavItemDTO>> GetNavItems(int conferenceId)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
+
+        return await connection.QueryAsync<NavItemDTO>(ConferenceQueries.GET_NAV_ITEMS, parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task<string> GetNavItemContent(int navItemId)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_id", navItemId, DbType.Int32);
+
+        return await connection.QuerySingleOrDefaultAsync<string>(ConferenceQueries.GET_NAV_ITEM_CONTENT, parameters, commandType: CommandType.StoredProcedure) ?? string.Empty;
     }
 }

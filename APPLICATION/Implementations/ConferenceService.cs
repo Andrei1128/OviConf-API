@@ -77,4 +77,29 @@ public class ConferenceService : IConferenceService
         response.Message = "Success!";
         return response;
     }
+
+    public async Task<Response> UpdateNavItem(NavItem navItem)
+    {
+        var response = new Response();
+
+        await _conferenceRepository.UpdateNavItem(navItem);
+
+        response.IsSucces = true;
+        response.Message = "Success!";
+        return response;
+    }
+
+    public async Task<Response> UpdateConference(ConferenceDTO payload)
+    {
+        var response = new Response();
+
+        await _conferenceRepository.UpdateConference(payload);
+
+        response.IsSucces = true;
+        response.Message = "Success!";
+        return response;
+    }
+
+    public async Task<IEnumerable<NavItemDTO>> GetNavItems(int conferenceId) => await _conferenceRepository.GetNavItems(conferenceId);
+    public async Task<string> GetNavItemContent(int navItemId) => await _conferenceRepository.GetNavItemContent(navItemId);
 }

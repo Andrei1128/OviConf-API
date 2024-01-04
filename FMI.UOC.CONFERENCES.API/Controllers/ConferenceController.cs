@@ -26,6 +26,18 @@ namespace API.Controllers
             return BadRequest(response);
         }
 
+        [HttpPost("Update")]
+        [Authorize(Policy = IdentityData.Helper)]
+        public async Task<ActionResult<Response>> UpdateConference([FromBody] ConferenceDTO payload)
+        {
+            var response = await _conferenceService.UpdateConference(payload);
+
+            if (response.IsSucces)
+                return Ok(response);
+
+            return BadRequest(response);
+        }
+
         [HttpPost("RegisterAtConference")]
         [Authorize(Policy = IdentityData.User)]
         public async Task<ActionResult<Response>> RegisterAtConference([FromBody] int conferenceId)
@@ -42,13 +54,33 @@ namespace API.Controllers
         [Authorize(Policy = IdentityData.User)]
         public async Task<ActionResult<Response>> AddNavItem([FromBody] NavItem navItem)
         {
-            var response = await _conferenceService.AddNavItem(navItem);
+            var response = await _conferenceService.UpdateNavItem(navItem);
 
             if (response.IsSucces)
                 return Ok(response);
 
             return BadRequest(response);
         }
+
+        [HttpPost("UpdateNavItem")]
+        [Authorize(Policy = IdentityData.User)]
+        public async Task<ActionResult<Response>> UpdateNavItem([FromBody] NavItem navItem)
+        {
+            var response = await _conferenceService.UpdateNavItem(navItem);
+
+            if (response.IsSucces)
+                return Ok(response);
+
+            return BadRequest(response);
+        }
+
+        [HttpPost("GetNavItems")]
+        [Authorize(Policy = IdentityData.User)]
+        public async Task<ActionResult<IEnumerable<NavItemDTO>>> GetNavItems([FromBody] int conferenceId) => Ok(await _conferenceService.GetNavItems(conferenceId));
+
+        [HttpPost("GetNavItemContent")]
+        [Authorize(Policy = IdentityData.User)]
+        public async Task<ActionResult<string>> GetNavItemContent([FromBody] int navItemId) => Ok(await _conferenceService.GetNavItemContent(navItemId));
 
         [HttpGet("GetMyConferences")]
         [Authorize(Policy = IdentityData.User)]
