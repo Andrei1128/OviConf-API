@@ -61,15 +61,9 @@ namespace API.Controllers
         [HttpGet("GetManagerRoleRequests")]
         public async Task<ActionResult<IEnumerable<RoleRequest>>> GetManagerRoleRequests([FromQuery] int conferenceId) => Ok(await _roleService.GetRoleRequests(IdentityData.Manager, conferenceId));
 
-        [Authorize(Policy = IdentityData.Manager)]
+        [ConferenceAuthorize(IdentityData.Manager)]
         [HttpGet("GetSpeakerRoleRequests")]
-        public async Task<ActionResult<IEnumerable<RoleRequest>>> GetSpeakerRoleRequests([FromQuery] int conferenceId)
-        {
-            if (!AuthHelper.IsConferenceAuthorized(HttpContext.User.Claims, conferenceId, ConferenceIdsClaim.Manager))
-                return Unauthorized("You are not manager in this conference!");
-
-            return Ok(await _roleService.GetRoleRequests(IdentityData.Speaker, conferenceId));
-        }
+        public async Task<ActionResult<IEnumerable<RoleRequest>>> GetSpeakerRoleRequests([FromQuery] int conferenceId) => Ok(await _roleService.GetRoleRequests(IdentityData.Speaker, conferenceId));
         #endregion
 
         #region ACCEPT_ROLE_REQUEST
@@ -97,12 +91,10 @@ namespace API.Controllers
             return BadRequest(response);
         }
 
-        [Authorize(Policy = IdentityData.Manager)]
+        [ConferenceAuthorize(IdentityData.Manager)]
         [HttpPost("AcceptSpeakerRoleRequest")]
         public async Task<ActionResult<Response>> AcceptSpeakerRoleRequest([FromBody] int requestId, int conferenceId)
         {
-            if (!AuthHelper.IsConferenceAuthorized(HttpContext.User.Claims, conferenceId, ConferenceIdsClaim.Manager))
-                return Unauthorized("You are not manager in this conference!");
 
             var response = await _roleService.AcceptRoleRequest(requestId);
 
@@ -138,13 +130,10 @@ namespace API.Controllers
             return BadRequest(response);
         }
 
-        [Authorize(Policy = IdentityData.Manager)]
+        [ConferenceAuthorize(IdentityData.Manager)]
         [HttpPost("RefuseSpeakerRoleRequest")]
         public async Task<ActionResult<Response>> RefuseSpeakerRoleRequest([FromBody] int requestId, int conferenceId)
         {
-            if (!AuthHelper.IsConferenceAuthorized(HttpContext.User.Claims, conferenceId, ConferenceIdsClaim.Manager))
-                return Unauthorized("You are not manager in this conference!");
-
             var response = await _roleService.RefuseRoleRequest(requestId);
 
             if (response.IsSucces)
