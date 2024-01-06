@@ -12,7 +12,6 @@ CREATE OR ALTER PROCEDURE usp_UpdateConference
 AS
 BEGIN
 	UPDATE tbl_Conferences
-	(Name,Place,Description,RegistrationTill,DateStart,DateEnd,IsActive,CreatedAt)
 	SET 
 		Name = @p_name, 
 		Place = @p_place, 
