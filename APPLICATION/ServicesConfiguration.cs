@@ -11,5 +11,6 @@ public static partial class ServicesConfiguration
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IConferenceService, ConferenceService>();
     }
 }

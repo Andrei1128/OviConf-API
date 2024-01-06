@@ -11,5 +11,6 @@ public static partial class ServicesConfiguration
         services.AddSingleton<IConnectionFactory, ConnectionFactory>();
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IConferenceRepository, ConferenceRepository>();
     }
 }
