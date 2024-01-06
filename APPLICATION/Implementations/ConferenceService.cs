@@ -65,7 +65,7 @@ public class ConferenceService : IConferenceService
         }
     }
 
-    public async Task<IEnumerable<UserWithRolesDTO>> GetPeople(int conferenceId, string role) => await _conferenceRepository.GetPeople(conferenceId, role);
+    public async Task<IEnumerable<UserDTO>> GetConferencePeople(int conferenceId, string role) => await _conferenceRepository.GetConferencePeople(conferenceId, role);
 
     public async Task<Response> AddNavItem(NavItem navItem)
     {

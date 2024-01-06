@@ -53,7 +53,7 @@ public class ConferenceRepository : IConferenceRepository
         return await connection.QueryAsync<Conference>(ConferenceQueries.GET_MY_CONFERENCES, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<UserWithRolesDTO>> GetPeople(int conferenceId, string role)
+    public async Task<IEnumerable<UserDTO>> GetConferencePeople(int conferenceId, string role)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
@@ -61,7 +61,7 @@ public class ConferenceRepository : IConferenceRepository
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
         parameters.Add("p_role", role, DbType.String);
 
-        return await connection.QueryAsync<UserWithRolesDTO>(ConferenceQueries.GET_PEOPLES, parameters, commandType: CommandType.StoredProcedure);
+        return await connection.QueryAsync<UserDTO>(ConferenceQueries.GET_CONFERENCE_PEOPLES, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task RegisterAtConference(int conferenceId, int userId)

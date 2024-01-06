@@ -4,9 +4,12 @@ CREATE OR ALTER PROCEDURE usp_GetMyConferences
 	@p_userId INT
 AS
 BEGIN
-	SELECT c.Id, c.Name, c.Place, c.RegistrationTill, c.DateStart, c.DateEnd 
+	SELECT DISTINCT c.Id, c.Name, c.Place, c.RegistrationTill, c.DateStart, c.DateEnd 
 	FROM tbl_Roles r 
 	INNER JOIN tbl_Conferences c 
 	ON r.ConferenceId = c.Id
 	WHERE r.UserId = @p_userId
+	AND DateEnd > GETDATE()
+	AND IsActive = 1
+	ORDER BY DateStart
 END;

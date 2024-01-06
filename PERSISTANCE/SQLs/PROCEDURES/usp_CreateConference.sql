@@ -5,10 +5,10 @@ CREATE OR ALTER PROCEDURE usp_CreateConference
 	@p_place nvarchar(255),
 	@p_description nvarchar(max),
 	@p_registrationTill Datetime,
-	@p_dateStart Datetime,
-	@p_dateEnd DateTime
+	@p_startDate Datetime,
+	@p_endDate DateTime
 AS
 BEGIN
 	INSERT INTO tbl_Conferences (Name,Place,Description,RegistrationTill,DateStart,DateEnd,IsActive,CreatedAt)
-		VALUES (@p_name,@p_place,@p_description,@p_registrationTill,@p_dateStart,@p_dateEnd,1,GETDATE())
+		VALUES (@p_name,@p_place,@p_description,@p_registrationTill,@p_startDate,@p_endDate,1,GETDATE())
 END;

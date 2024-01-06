@@ -1,12 +1,10 @@
 ﻿USE OviConf;
 GO
-CREATE OR ALTER PROCEDURE usp_GetMyConferences
-	@p_userId INT
+CREATE OR ALTER PROCEDURE usp_GetConference
+	@p_id INT
 AS
 BEGIN
-	SELECT DISTINCT c.Id, c.Name, c.Place, c.RegistrationTill, c.DateStart, c.DateEnd 
-	FROM tbl_Roles r 
-	INNER JOIN tbl_Conferences c 
-	ON r.ConferenceId = c.Id
-	WHERE r.UserId = @p_userId
+	SELECT Id, Name, Place, Description RegistrationTill, DateStart, DateEnd 
+	FROM tbl_Conferences
+	WHERE Id = @p_id
 END;
