@@ -4,5 +4,5 @@ namespace APPLICATION.Contracts;
 
 public interface IJwtService
 {
-    string GenerateToken(UserDTO user);
+    string GenerateToken(UserWithRolesDTO user);
 }

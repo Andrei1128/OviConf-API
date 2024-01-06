@@ -64,11 +64,9 @@ public class AuthService : IAuthService
             return response;
         }
 
-        var pass = BC.HashPassword(payload.Password);
-
         if (BC.Verify(payload.Password, user.Password))
         {
-            UserDTO userDTO = user.ToUserDTO(await _authRepository.GetUserRoles(user.Id));
+            UserWithRolesDTO userDTO = user.ToUserWithRolesDTO(await _authRepository.GetUserRoles(user.Id));
 
             response.Data = new AuthResponse()
             {

@@ -6,12 +6,10 @@ CREATE OR ALTER PROCEDURE usp_RegisterUser
 	@p_password nvarchar(255)
 AS
 BEGIN
-	DECLARE @v_userId TABLE (ID INT PRIMARY KEY)
-
 	INSERT INTO tbl_Users (Email,Name,Password)
-	OUTPUT Inserted.ID INTO @v_userId
+	OUTPUT Inserted.ID as ID INTO #TEMP
 	VALUES (@p_email,@p_name,@p_password)
 
 	INSERT INTO tbl_Roles (UserId,Role,RequestedAt,OperatedAt,OperatedBy,IsAccepted)
-	VALUES((SELECT TOP 1 ID FROM @v_userId),'User',GETDATE(),GETDATE(),'System',1);
+	VALUES((SELECT TOP 1 ID FROM #TEMP),'User',GETDATE(),GETDATE(),1,1);
 END;

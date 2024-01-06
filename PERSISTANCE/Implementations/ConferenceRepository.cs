@@ -11,14 +11,17 @@ public class ConferenceRepository : IConferenceRepository
 {
     private readonly IConnectionFactory _connectionFactory;
     public ConferenceRepository(IConnectionFactory connectionFactory) => _connectionFactory = connectionFactory;
-    public async Task CreateConference(ConferenceDTO payload)
+    public async Task CreateConference(Conference payload)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_name", payload.Name, DbType.String);
+        parameters.Add("p_place", payload.Place, DbType.String);
+        parameters.Add("p_description", payload.Description, DbType.String);
         parameters.Add("p_startDate", payload.StartDate, DbType.DateTime);
         parameters.Add("p_endDate", payload.EndDate, DbType.DateTime);
+        parameters.Add("p_registrationTill", payload.RegistrationTill, DbType.DateTime);
 
         await connection.ExecuteAsync(ConferenceQueries.CREATE_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
     }
@@ -50,7 +53,7 @@ public class ConferenceRepository : IConferenceRepository
         return await connection.QueryAsync<Conference>(ConferenceQueries.GET_MY_CONFERENCES, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role)
+    public async Task<IEnumerable<UserWithRolesDTO>> GetPeople(int conferenceId, string role)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
@@ -58,7 +61,7 @@ public class ConferenceRepository : IConferenceRepository
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
         parameters.Add("p_role", role, DbType.String);
 
-        return await connection.QueryAsync<UserDTO>(ConferenceQueries.GET_PEOPLES, parameters, commandType: CommandType.StoredProcedure);
+        return await connection.QueryAsync<UserWithRolesDTO>(ConferenceQueries.GET_PEOPLES, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task RegisterAtConference(int conferenceId, int userId)
@@ -94,31 +97,36 @@ public class ConferenceRepository : IConferenceRepository
         parameters.Add("p_title", navItem.Title, DbType.String);
         parameters.Add("p_content", navItem.Content, DbType.String);
         parameters.Add("p_order", navItem.Order ?? 0, DbType.Int32);
+        parameters.Add("p_isActive", navItem.IsActive, DbType.Boolean);
 
         await connection.ExecuteAsync(ConferenceQueries.UPDATE_NAV_ITEM, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task UpdateConference(ConferenceDTO payload)
+    public async Task UpdateConference(Conference payload)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_id", payload.Id, DbType.Int32);
         parameters.Add("p_name", payload.Name, DbType.String);
+        parameters.Add("p_place", payload.Place, DbType.String);
+        parameters.Add("p_description", payload.Description, DbType.String);
+        parameters.Add("p_registrationTill", payload.RegistrationTill, DbType.DateTime);
         parameters.Add("p_startDate", payload.StartDate, DbType.DateTime);
         parameters.Add("p_endDate", payload.EndDate, DbType.DateTime);
+        parameters.Add("p_isActive", payload.IsActive, DbType.Boolean);
 
         await connection.ExecuteAsync(ConferenceQueries.UPDATE_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<NavItemDTO>> GetNavItems(int conferenceId)
+    public async Task<IEnumerable<NavTitleDTO>> GetNavItems(int conferenceId)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_conferenceId", conferenceId, DbType.Int32);
 
-        return await connection.QueryAsync<NavItemDTO>(ConferenceQueries.GET_NAV_ITEMS, parameters, commandType: CommandType.StoredProcedure);
+        return await connection.QueryAsync<NavTitleDTO>(ConferenceQueries.GET_NAV_TITLES, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task<string> GetNavItemContent(int navItemId)

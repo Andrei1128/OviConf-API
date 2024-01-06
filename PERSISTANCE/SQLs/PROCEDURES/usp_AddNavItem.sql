@@ -7,6 +7,6 @@ CREATE OR ALTER PROCEDURE usp_AddNavItem
 	@p_order INT = 0
 AS
 BEGIN
-	INSERT INTO tbl_NavItems (ConferenceId, Title, Content, [Order])
-	VALUES (@p_conferenceId, @p_title, @p_content, @p_order)
+	INSERT INTO tbl_NavItems (ConferenceId, Title, Content, [Order],IsActive)
+	VALUES (@p_conferenceId, @p_title, @p_content, @p_order,1)
 END;

@@ -16,7 +16,7 @@ public class JwtService : IJwtService
     {
         _appSettings = appSettings;
     }
-    public string GenerateToken(UserDTO user)
+    public string GenerateToken(UserWithRolesDTO user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 

@@ -7,4 +7,5 @@ BEGIN
 	SELECT Content
 	FROM tbl_NavItems 
 	WHERE ID = @p_Id
+	AND IsActive = 1
 END;

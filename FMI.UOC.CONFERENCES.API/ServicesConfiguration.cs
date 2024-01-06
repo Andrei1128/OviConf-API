@@ -9,7 +9,7 @@ using System.Text;
 
 namespace API.ServicesConfiguration;
 
-public static class APIServicesConfiguration
+public static partial class ServicesConfiguration
 {
     public static void AddCustomSwaggerGen(this IServiceCollection services)
     {

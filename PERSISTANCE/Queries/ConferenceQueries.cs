@@ -11,6 +11,6 @@ public class ConferenceQueries
     public const string ADD_NAV_ITEM = "usp_AddNavItem";
     public const string UPDATE_CONFERENCE = "usp_UpdateConference";
     public const string UPDATE_NAV_ITEM = "usp_UpdateNavItem";
-    public const string GET_NAV_ITEMS = "usp_GetNavItems";
+    public const string GET_NAV_TITLES = "usp_GetNavTitles";
     public const string GET_NAV_ITEM_CONTENT = "usp_GetNavItemContent";
 }

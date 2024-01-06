@@ -6,14 +6,14 @@ namespace APPLICATION.Contracts;
 
 public interface IConferenceService
 {
-    public Task<Response> CreateConference(ConferenceDTO conferenceRequest);
+    public Task<Response> CreateConference(Conference conferenceRequest);
     public Task<IEnumerable<Conference>> GetConferences();
     public Task<Conference?> GetConference(int id);
     public Task<Response> RegisterAtConference(int conferenceId);
     public Task<IEnumerable<Conference>> GetMyConferences();
-    public Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role);
+    public Task<IEnumerable<UserWithRolesDTO>> GetPeople(int conferenceId, string role);
     public Task<Response> UpdateNavItem(NavItem navItem);
-    public Task<Response> UpdateConference(ConferenceDTO payload);
-    public Task<IEnumerable<NavItemDTO>> GetNavItems(int conferenceId);
+    public Task<Response> UpdateConference(Conference payload);
+    public Task<IEnumerable<NavTitleDTO>> GetNavItems(int conferenceId);
     public Task<string> GetNavItemContent(int navItemId);
 }

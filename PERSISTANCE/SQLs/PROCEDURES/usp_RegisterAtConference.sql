@@ -5,6 +5,6 @@ CREATE OR ALTER PROCEDURE usp_RegisterAtConference
 	@p_conferenceId INT
 AS
 BEGIN
-	INSERT INTO tbl_UserConference (UserId,ConferenceId)
-		VALUES(@p_userId,@p_conferenceId);
+	INSERT INTO tbl_Roles (UserId, Role,ConferenceId, RequestedAt, OperatedAt, IsAccepted, OperatedBy)
+	VALUES (@p_userId, 'Participant', @p_conferenceId, GETDATE(), GETDATE(), 1, 1)
 END;

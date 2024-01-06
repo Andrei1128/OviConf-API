@@ -5,8 +5,8 @@ namespace DOMAIN.Utilities;
 
 public static class Mapper
 {
-    public static UserDTO ToUserDTO(this User user, IEnumerable<RoleDTO> roles) =>
-        new UserDTO()
+    public static UserWithRolesDTO ToUserWithRolesDTO(this User user, IEnumerable<RoleDTO> roles) =>
+        new UserWithRolesDTO()
         {
             Id = user.Id,
             Email = user.Email,

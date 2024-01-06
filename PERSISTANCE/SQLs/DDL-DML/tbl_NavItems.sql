@@ -8,6 +8,7 @@ CREATE TABLE tbl_NavItems
 		ConferenceId INT,
 		Title NVARCHAR(255),
 		Content NVARCHAR(MAX),
-		[Order] INT
+		[Order] INT,
+		IsActive BIT
 	);
 GO

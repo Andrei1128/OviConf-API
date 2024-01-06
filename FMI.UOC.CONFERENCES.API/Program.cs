@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var appSettings = builder.BindAppSettings();
 
-Log.Logger = APIServicesConfiguration.CreateLogger(appSettings.DBConnections.SqlServer);
+Log.Logger = API.ServicesConfiguration.ServicesConfiguration.CreateLogger(appSettings.DBConnections.SqlServer);
 
 builder.Services.AddCustomAuthentication(appSettings.JwtSettings);
 builder.Services.AddCustomAuthorization();

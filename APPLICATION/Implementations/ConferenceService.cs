@@ -22,11 +22,11 @@ public class ConferenceService : IConferenceService
     public async Task<IEnumerable<Conference>> GetConferences() => await _conferenceRepository.GetConferences();
     public async Task<IEnumerable<Conference>> GetMyConferences() => await _conferenceRepository.GetMyConferences(_thisUser.Id);
 
-    public async Task<Response> CreateConference(ConferenceDTO payload)
+    public async Task<Response> CreateConference(Conference payload)
     {
         var response = new Response();
 
-        var validationResult = new ConferenceDTOValidator().Validate(payload);
+        var validationResult = new ConferenceValidator().Validate(payload);
 
         if (!validationResult.IsValid)
         {
@@ -65,7 +65,7 @@ public class ConferenceService : IConferenceService
         }
     }
 
-    public async Task<IEnumerable<UserDTO>> GetPeople(int conferenceId, string role) => await _conferenceRepository.GetPeople(conferenceId, role);
+    public async Task<IEnumerable<UserWithRolesDTO>> GetPeople(int conferenceId, string role) => await _conferenceRepository.GetPeople(conferenceId, role);
 
     public async Task<Response> AddNavItem(NavItem navItem)
     {
@@ -89,7 +89,7 @@ public class ConferenceService : IConferenceService
         return response;
     }
 
-    public async Task<Response> UpdateConference(ConferenceDTO payload)
+    public async Task<Response> UpdateConference(Conference payload)
     {
         var response = new Response();
 
@@ -100,6 +100,6 @@ public class ConferenceService : IConferenceService
         return response;
     }
 
-    public async Task<IEnumerable<NavItemDTO>> GetNavItems(int conferenceId) => await _conferenceRepository.GetNavItems(conferenceId);
+    public async Task<IEnumerable<NavTitleDTO>> GetNavItems(int conferenceId) => await _conferenceRepository.GetNavItems(conferenceId);
     public async Task<string> GetNavItemContent(int navItemId) => await _conferenceRepository.GetNavItemContent(navItemId);
 }

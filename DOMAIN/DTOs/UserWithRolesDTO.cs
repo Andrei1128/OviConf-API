@@ -1,6 +1,6 @@
 ﻿namespace DOMAIN.DTOs;
 
-public class UserDTO
+public class UserWithRolesDTO
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

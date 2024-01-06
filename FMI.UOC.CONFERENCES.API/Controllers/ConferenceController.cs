@@ -16,7 +16,7 @@ namespace API.Controllers
 
         [HttpPost("Create")]
         [Authorize(Policy = IdentityData.Helper)]
-        public async Task<ActionResult<Response>> CreateConference([FromBody] ConferenceDTO payload)
+        public async Task<ActionResult<Response>> CreateConference([FromBody] Conference payload)
         {
             var response = await _conferenceService.CreateConference(payload);
 
@@ -28,7 +28,7 @@ namespace API.Controllers
 
         [HttpPost("Update")]
         [Authorize(Policy = IdentityData.Helper)]
-        public async Task<ActionResult<Response>> UpdateConference([FromBody] ConferenceDTO payload)
+        public async Task<ActionResult<Response>> UpdateConference([FromBody] Conference payload)
         {
             var response = await _conferenceService.UpdateConference(payload);
 
@@ -76,7 +76,7 @@ namespace API.Controllers
 
         [HttpPost("GetNavItems")]
         [Authorize(Policy = IdentityData.User)]
-        public async Task<ActionResult<IEnumerable<NavItemDTO>>> GetNavItems([FromBody] int conferenceId) => Ok(await _conferenceService.GetNavItems(conferenceId));
+        public async Task<ActionResult<IEnumerable<NavTitleDTO>>> GetNavItems([FromBody] int conferenceId) => Ok(await _conferenceService.GetNavItems(conferenceId));
 
         [HttpPost("GetNavItemContent")]
         [Authorize(Policy = IdentityData.User)]
@@ -93,14 +93,17 @@ namespace API.Controllers
         [HttpGet("GetConference")]
         [AllowAnonymous]
         public async Task<ActionResult<Conference?>> GetConference([FromQuery] int id) => Ok(await _conferenceService.GetConference(id));
+
         [HttpGet("GetParticipants")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetParticipants([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.User));
+        public async Task<ActionResult<IEnumerable<UserWithRolesDTO>>> GetParticipants([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Participant));
+
         [HttpGet("GetSpeakers")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetSpeakers([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Speaker));
+        public async Task<ActionResult<IEnumerable<UserWithRolesDTO>>> GetSpeakers([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Speaker));
+
         [HttpGet("GetManagers")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetManagers([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Manager));
+        public async Task<ActionResult<IEnumerable<UserWithRolesDTO>>> GetManagers([FromQuery] int conferenceId) => Ok(await _conferenceService.GetPeople(conferenceId, IdentityData.Manager));
     }
 }
