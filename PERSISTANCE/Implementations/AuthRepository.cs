@@ -11,6 +11,19 @@ public class AuthRepository : IAuthRepository
 {
     private readonly IConnectionFactory _connectionFactory;
     public AuthRepository(IConnectionFactory connectionFactory) => _connectionFactory = connectionFactory;
+
+    public async Task<bool> EditUser(int userId, string name, string password)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_userId", userId, DbType.String);
+        parameters.Add("p_name", name, DbType.String);
+        parameters.Add("p_password", password, DbType.String);
+
+        return await connection.ExecuteScalarAsync<bool>(AuthQueries.EDIT_USER, parameters, commandType: CommandType.StoredProcedure);
+    }
+
     public async Task<User?> GetUserData(string email)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
@@ -19,6 +32,16 @@ public class AuthRepository : IAuthRepository
         parameters.Add("p_email", email, DbType.String);
 
         return await connection.QuerySingleOrDefaultAsync<User>(AuthQueries.GET_USER_DATA, parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task<UserWithRolesDTO?> GetUserInfo(int userId)
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("p_userId", userId, DbType.Int32);
+
+        return await connection.QuerySingleOrDefaultAsync<UserWithRolesDTO>(AuthQueries.GET_USER_INFO, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task<IEnumerable<RoleDTO>> GetUserRoles(int userId)

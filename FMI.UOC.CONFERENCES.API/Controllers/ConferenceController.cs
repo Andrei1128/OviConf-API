@@ -16,11 +16,11 @@ namespace API.Controllers
 
         [HttpPost("Create")]
         [Authorize(Policy = IdentityData.Helper)]
-        public async Task<ActionResult<Response>> CreateConference([FromBody] Conference payload)
+        public async Task<ActionResult<Response<int>>> CreateConference([FromBody] Conference payload)
         {
             var response = await _conferenceService.CreateConference(payload);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -32,7 +32,7 @@ namespace API.Controllers
         {
             var response = await _conferenceService.UpdateConference(payload);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -44,7 +44,7 @@ namespace API.Controllers
         {
             var response = await _conferenceService.RegisterAtConference(conferenceId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -56,7 +56,7 @@ namespace API.Controllers
         {
             var response = await _conferenceService.AddNavItem(navItem);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -68,7 +68,7 @@ namespace API.Controllers
         {
             var response = await _conferenceService.UpdateNavItem(navItem);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);

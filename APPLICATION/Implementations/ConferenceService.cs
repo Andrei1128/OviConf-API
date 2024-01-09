@@ -22,9 +22,9 @@ public class ConferenceService : IConferenceService
     public async Task<IEnumerable<Conference>> GetConferences() => await _conferenceRepository.GetConferences();
     public async Task<IEnumerable<Conference>> GetMyConferences() => await _conferenceRepository.GetMyConferences(_thisUser.Id);
 
-    public async Task<Response> CreateConference(Conference payload)
+    public async Task<Response<int>> CreateConference(Conference payload)
     {
-        var response = new Response();
+        var response = new Response<int>();
 
         var validationResult = new ConferenceValidator().Validate(payload);
 
@@ -32,12 +32,13 @@ public class ConferenceService : IConferenceService
         {
             response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
             response.Message = "Invalid data!";
+            response.Data = 0;
             return response;
         }
 
-        await _conferenceRepository.CreateConference(payload);
 
-        response.IsSucces = true;
+        response.Data = await _conferenceRepository.CreateConference(payload);
+        response.IsSuccess = true;
         response.Message = "Conference created!";
         return response;
     }
@@ -50,7 +51,7 @@ public class ConferenceService : IConferenceService
         {
             await _conferenceRepository.RegisterAtConference(conferenceId, _thisUser.Id);
 
-            response.IsSucces = true;
+            response.IsSuccess = true;
             response.Message = "Registered successfully!!";
             return response;
         }
@@ -73,7 +74,7 @@ public class ConferenceService : IConferenceService
 
         await _conferenceRepository.AddNavItem(navItem);
 
-        response.IsSucces = true;
+        response.IsSuccess = true;
         response.Message = "Success!";
         return response;
     }
@@ -84,7 +85,7 @@ public class ConferenceService : IConferenceService
 
         await _conferenceRepository.UpdateNavItem(navItem);
 
-        response.IsSucces = true;
+        response.IsSuccess = true;
         response.Message = "Success!";
         return response;
     }
@@ -95,7 +96,7 @@ public class ConferenceService : IConferenceService
 
         await _conferenceRepository.UpdateConference(payload);
 
-        response.IsSucces = true;
+        response.IsSuccess = true;
         response.Message = "Success!";
         return response;
     }

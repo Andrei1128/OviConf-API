@@ -13,10 +13,12 @@ public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
     private readonly IJwtService _jwtService;
-    public AuthService(IAuthRepository authRepository, IJwtService jwtService)
+    private readonly ThisUser _thisUser;
+    public AuthService(IAuthRepository authRepository, IJwtService jwtService, ThisUser thisUser)
     {
         _authRepository = authRepository;
         _jwtService = jwtService;
+        _thisUser = thisUser;
     }
 
     public async Task<Response> Register(RegisterRequest payload)
@@ -38,7 +40,7 @@ public class AuthService : IAuthService
         {
             await _authRepository.RegisterUser(payload.Email, payload.Name, hashedPassword);
 
-            response.IsSucces = true;
+            response.IsSuccess = true;
             response.Message = "Account created!";
             return response;
         }
@@ -50,6 +52,33 @@ public class AuthService : IAuthService
                 return response;
             }
             else throw;
+        }
+    }
+    public async Task<Response> EditUser(RegisterRequest payload)
+    {
+        var response = new Response();
+
+        var validationResult = new RegisterRequestValidator().Validate(payload);
+
+        if (!validationResult.IsValid || _thisUser.Email != payload.Email)
+        {
+            response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            response.Message = "Invalid data!";
+            return response;
+        }
+
+        var isSuccess = await _authRepository.EditUser(_thisUser.Id, payload.Name, payload.Password);
+
+        if (isSuccess)
+        {
+            response.IsSuccess = true;
+            response.Message = "Account details saved!";
+            return response;
+        }
+        else
+        {
+            response.Message = "Could not save details!";
+            return response;
         }
     }
     public async Task<Response<AuthResponse>> Login(LoginRequest payload)
@@ -74,7 +103,7 @@ public class AuthService : IAuthService
                 Jwt = _jwtService.GenerateToken(userDTO)
             };
 
-            response.IsSucces = true;
+            response.IsSuccess = true;
             response.Message = "Login succes!";
 
             return response;
@@ -82,5 +111,27 @@ public class AuthService : IAuthService
 
         response.Message = "Invalid Email or Password!";
         return response;
+    }
+
+    public async Task<Response<UserWithRolesDTO>> GetUserInfo()
+    {
+        var response = new Response<UserWithRolesDTO>();
+
+        var user = await _authRepository.GetUserInfo(_thisUser.Id);
+
+        if (user is not null)
+        {
+            user.Roles = await _authRepository.GetUserRoles(user.Id);
+
+            response.Data = user;
+            response.IsSuccess = true;
+            response.Message = "Success!";
+            return response;
+        }
+        else
+        {
+            response.Message = "Could not find user!";
+            return response;
+        }
     }
 }

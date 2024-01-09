@@ -10,5 +10,6 @@ CREATE OR ALTER PROCEDURE usp_CreateConference
 AS
 BEGIN
 	INSERT INTO tbl_Conferences (Name,Place,Description,RegistrationTill,DateStart,DateEnd,IsActive,CreatedAt)
+		OUTPUT Inserted.Id
 		VALUES (@p_name,@p_place,@p_description,@p_registrationTill,@p_startDate,@p_endDate,1,GETDATE())
 END;

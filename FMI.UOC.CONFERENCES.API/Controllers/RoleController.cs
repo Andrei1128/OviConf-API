@@ -21,7 +21,7 @@ namespace API.Controllers
         {
             var response = await _roleService.RequestRole(IdentityData.Helper);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -33,7 +33,7 @@ namespace API.Controllers
         {
             var response = await _roleService.RequestRole(IdentityData.Manager, conferenceId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -45,7 +45,7 @@ namespace API.Controllers
         {
             var response = await _roleService.RequestRole(IdentityData.Speaker, conferenceId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -73,7 +73,7 @@ namespace API.Controllers
         {
             var response = await _roleService.AcceptRoleRequest(requestId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -85,7 +85,7 @@ namespace API.Controllers
         {
             var response = await _roleService.AcceptRoleRequest(requestId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -98,7 +98,7 @@ namespace API.Controllers
 
             var response = await _roleService.AcceptRoleRequest(requestId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -112,7 +112,7 @@ namespace API.Controllers
         {
             var response = await _roleService.RefuseRoleRequest(requestId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -124,7 +124,7 @@ namespace API.Controllers
         {
             var response = await _roleService.RefuseRoleRequest(requestId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);
@@ -136,7 +136,7 @@ namespace API.Controllers
         {
             var response = await _roleService.RefuseRoleRequest(requestId);
 
-            if (response.IsSucces)
+            if (response.IsSuccess)
                 return Ok(response);
 
             return BadRequest(response);

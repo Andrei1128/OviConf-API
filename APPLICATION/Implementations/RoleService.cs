@@ -24,7 +24,7 @@ public class RoleService : IRoleService
 
         await _roleRepository.AcceptRoleRequest(requestId, _thisUser.Id);
 
-        response.IsSucces = true;
+        response.IsSuccess = true;
         response.Message = "Request accepted succesfully!";
         return response;
     }
@@ -35,7 +35,7 @@ public class RoleService : IRoleService
 
         await _roleRepository.RefuseRoleRequest(requestId, _thisUser.Id);
 
-        response.IsSucces = true;
+        response.IsSuccess = true;
         response.Message = "Request refused succesfully!";
         return response;
     }
@@ -48,7 +48,7 @@ public class RoleService : IRoleService
         {
             await _roleRepository.RequestRole(_thisUser.Id, role, conferenceId);
 
-            response.IsSucces = true;
+            response.IsSuccess = true;
             response.Message = "Request done succesfully!";
             return response;
         }

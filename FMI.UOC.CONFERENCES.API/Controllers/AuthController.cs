@@ -1,4 +1,5 @@
 ﻿using APPLICATION.Contracts;
+using DOMAIN.DTOs;
 using DOMAIN.Requests;
 using DOMAIN.Responses;
 using DOMAIN.Utilities;
@@ -18,7 +19,7 @@ public class AuthController : ControllerBase
     {
         var response = await _authService.Register(payload);
 
-        if (response.IsSucces)
+        if (response.IsSuccess)
             return Ok(response);
 
         return BadRequest(response);
@@ -29,7 +30,29 @@ public class AuthController : ControllerBase
     {
         var response = await _authService.Login(payload);
 
-        if (response.IsSucces)
+        if (response.IsSuccess)
+            return Ok(response);
+
+        return BadRequest(response);
+    }
+
+    [HttpGet("GetUserInfo")]
+    public async Task<ActionResult<Response<UserWithRolesDTO>>> GetUserInfo()
+    {
+        var response = await _authService.GetUserInfo();
+
+        if (response.IsSuccess)
+            return Ok(response);
+
+        return BadRequest(response);
+    }
+
+    [HttpPost("EditUser")]
+    public async Task<ActionResult<Response>> EditUser(RegisterRequest payload)
+    {
+        var response = await _authService.EditUser(payload);
+
+        if (response.IsSuccess)
             return Ok(response);
 
         return BadRequest(response);

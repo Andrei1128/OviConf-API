@@ -11,6 +11,9 @@ var appSettings = builder.BindAppSettings();
 
 Log.Logger = API.ServicesConfiguration.ServicesConfiguration.CreateLogger(appSettings.DBConnections.SqlServer);
 
+builder.Services.AddCors(
+    builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()!);
+
 builder.Services.AddCustomAuthentication(appSettings.JwtSettings);
 builder.Services.AddCustomAuthorization();
 
@@ -33,6 +36,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 

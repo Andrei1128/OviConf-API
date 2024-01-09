@@ -11,7 +11,7 @@ public class ConferenceRepository : IConferenceRepository
 {
     private readonly IConnectionFactory _connectionFactory;
     public ConferenceRepository(IConnectionFactory connectionFactory) => _connectionFactory = connectionFactory;
-    public async Task CreateConference(Conference payload)
+    public async Task<int> CreateConference(Conference payload)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
@@ -23,7 +23,7 @@ public class ConferenceRepository : IConferenceRepository
         parameters.Add("p_endDate", payload.EndDate, DbType.DateTime);
         parameters.Add("p_registrationTill", payload.RegistrationTill, DbType.DateTime);
 
-        await connection.ExecuteAsync(ConferenceQueries.CREATE_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
+        return await connection.ExecuteScalarAsync<int>(ConferenceQueries.CREATE_CONFERENCE, parameters, commandType: CommandType.StoredProcedure);
     }
 
     public async Task<Conference?> GetConference(int id)

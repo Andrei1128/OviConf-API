@@ -11,6 +11,18 @@ namespace API.ServicesConfiguration;
 
 public static partial class ServicesConfiguration
 {
+    public static void AddCors(this IServiceCollection service, string[] allowedOrigins)
+    {
+        service.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.WithOrigins(allowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+            });
+        });
+    }
     public static void AddCustomSwaggerGen(this IServiceCollection services)
     {
         services.AddSwaggerGen(opt =>

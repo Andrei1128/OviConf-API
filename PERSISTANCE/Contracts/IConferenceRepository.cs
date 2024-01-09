@@ -5,7 +5,7 @@ namespace PERSISTANCE.Contracts;
 
 public interface IConferenceRepository
 {
-    Task CreateConference(Conference payload);
+    Task<int> CreateConference(Conference payload);
     Task<IEnumerable<Conference>> GetConferences();
     Task<Conference?> GetConference(int id);
     Task RegisterAtConference(int conferenceId, int userId);

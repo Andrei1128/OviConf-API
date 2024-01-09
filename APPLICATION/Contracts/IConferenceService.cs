@@ -6,7 +6,7 @@ namespace APPLICATION.Contracts;
 
 public interface IConferenceService
 {
-    public Task<Response> CreateConference(Conference conferenceRequest);
+    public Task<Response<int>> CreateConference(Conference conferenceRequest);
     public Task<IEnumerable<Conference>> GetConferences();
     public Task<Conference?> GetConference(int id);
     public Task<Response> RegisterAtConference(int conferenceId);
