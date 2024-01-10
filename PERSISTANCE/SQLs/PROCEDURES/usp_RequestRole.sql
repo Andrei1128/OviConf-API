@@ -7,5 +7,5 @@ CREATE OR ALTER PROCEDURE usp_RequestRole
 AS
 BEGIN
 	INSERT INTO tbl_Roles (UserId, Role,ConferenceId, RequestedAt, OperatedAt, IsAccepted, OperatedBy)
-	VALUES (@p_userId, @p_role, @p_conferenceId, GETDATE(), GETDATE(), 1, 'system')
+	VALUES (@p_userId, @p_role, @p_conferenceId, GETDATE(), GETDATE(), 1, 1)
 END;
