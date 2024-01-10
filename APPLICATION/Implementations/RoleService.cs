@@ -33,7 +33,7 @@ public class RoleService : IRoleService
     {
         var response = new Response();
 
-        await _roleRepository.RefuseRoleRequest(requestId, _thisUser.Id);
+        await _roleRepository.RefuseRoleRequest(requestId);
 
         response.IsSuccess = true;
         response.Message = "Request refused succesfully!";

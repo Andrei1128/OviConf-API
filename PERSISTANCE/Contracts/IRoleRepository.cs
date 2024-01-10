@@ -8,5 +8,5 @@ public interface IRoleRepository
     Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null);
     Task<IEnumerable<RoleRequest>> GetAllRoleRequests();
     Task AcceptRoleRequest(int requestId, int operatedByUserId);
-    Task RefuseRoleRequest(int requestId, int operatedByUserId);
+    Task RefuseRoleRequest(int requestId);
 }

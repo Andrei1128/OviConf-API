@@ -40,13 +40,12 @@ public class RoleRepository : IRoleRepository
         return await connection.QueryAsync<RoleRequest>(RoleQueries.GET_ROLE_REQUESTS, parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public async Task RefuseRoleRequest(int requestId, int operatedByUserId)
+    public async Task RefuseRoleRequest(int requestId)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("p_requestId", requestId, DbType.Int32);
-        parameters.Add("p_operatedBy", operatedByUserId, DbType.Int32);
 
         await connection.ExecuteAsync(RoleQueries.REFUSE_ROLE_REQUESTS, parameters, commandType: CommandType.StoredProcedure);
     }
