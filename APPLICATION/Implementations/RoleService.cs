@@ -62,4 +62,6 @@ public class RoleService : IRoleService
             else throw;
         }
     }
+
+    public Task<IEnumerable<RoleRequest>> GetAllRoleRequests() => await _roleRepository.GetAllRoleRequests();
 }

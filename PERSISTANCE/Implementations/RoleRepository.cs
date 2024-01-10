@@ -22,6 +22,13 @@ public class RoleRepository : IRoleRepository
         await connection.ExecuteAsync(RoleQueries.ACCEPT_ROLE_REQUEST, parameters, commandType: CommandType.StoredProcedure);
     }
 
+    public async Task<IEnumerable<RoleRequest>> GetAllRoleRequests()
+    {
+        using var connection = _connectionFactory.CreateMSSQLConnection();
+
+        return await connection.QueryAsync<RoleRequest>(RoleQueries.GET_ALL_ROLE_REQUESTS, commandType: CommandType.StoredProcedure);
+    }
+
     public async Task<IEnumerable<RoleRequest>> GetRoleRequests(string role, int? conferenceId = null)
     {
         using var connection = _connectionFactory.CreateMSSQLConnection();

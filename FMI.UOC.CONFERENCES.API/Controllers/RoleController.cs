@@ -14,6 +14,10 @@ namespace API.Controllers
         private readonly IRoleService _roleService;
         public RoleController(IRoleService roleService) => _roleService = roleService;
 
+        [Authorize(Policy = IdentityData.Helper)]
+        [HttpGet("GetAllRoleRequests")]
+        public async Task<ActionResult<IEnumerable<RoleRequest>>> GeAllRoleRequests() => Ok(await _roleService.GetAllRoleRequests());
+
         #region REQUEST_ROLE
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestHelperRole")]
@@ -29,7 +33,7 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestManagerRole")]
-        public async Task<ActionResult<Response>> RequestManagerRole(int conferenceId)
+        public async Task<ActionResult<Response>> RequestManagerRole([FromBody] int conferenceId)
         {
             var response = await _roleService.RequestRole(IdentityData.Manager, conferenceId);
 
@@ -41,7 +45,7 @@ namespace API.Controllers
 
         [Authorize(Policy = IdentityData.User)]
         [HttpPost("RequestSpeakerRole")]
-        public async Task<ActionResult<Response>> RequestSpeakerRole(int conferenceId)
+        public async Task<ActionResult<Response>> RequestSpeakerRole([FromBody] int conferenceId)
         {
             var response = await _roleService.RequestRole(IdentityData.Speaker, conferenceId);
 
