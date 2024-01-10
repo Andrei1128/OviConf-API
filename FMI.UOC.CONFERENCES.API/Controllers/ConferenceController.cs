@@ -75,11 +75,11 @@ namespace API.Controllers
         }
 
         [HttpPost("GetNavItems")]
-        [Authorize(Policy = IdentityData.User)]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<NavTitleDTO>>> GetNavItems([FromBody] int conferenceId) => Ok(await _conferenceService.GetNavItems(conferenceId));
 
         [HttpPost("GetNavItemContent")]
-        [Authorize(Policy = IdentityData.User)]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> GetNavItemContent([FromBody] int navItemId) => Ok(await _conferenceService.GetNavItemContent(navItemId));
 
         [HttpGet("GetMyConferences")]
